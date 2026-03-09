@@ -68,6 +68,12 @@
         "jestConfig": "apps/api/jest.config.cts",
         "passWithNoTests": true
       }
+    },
+     "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/api/**/*.ts"]
+      }
     }
   }
 }
