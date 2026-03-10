@@ -48,3 +48,6 @@ Thumbs.db
 .env.local
 .env.*.local
 
+
+# Prisma generated client
+apps/api/src/infrastructure/prisma/generated
