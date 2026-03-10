@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run db:generate
+RUN DATABASE_URL="postgresql://postgres:postgres@localhost:5432/rdc" npm run db:generate
 RUN npx nx build api --configuration=production
 
 FROM node:24-alpine
