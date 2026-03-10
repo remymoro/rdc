@@ -33,7 +33,7 @@ services:
     volumes:
       - ./package.json:/app/package.json
       - ./package-lock.json:/app/package-lock.json
-      - ./apps/frontend/src:/app/apps/frontend/src
+      - ./apps/frontend:/app/apps/frontend
       - ./libs:/app/libs
     networks:
       - rdc-network
