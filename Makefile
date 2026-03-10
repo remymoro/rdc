@@ -1,4 +1,4 @@
-.PHONY: dev down logs ps db-only
+.PHONY: dev down logs ps db-only db-migrate db-studio
 
 dev:
 	docker compose up --build
@@ -14,3 +14,9 @@ ps:
 
 db-only:
 	docker compose up db
+
+db-migrate:
+	docker compose run --rm api sh -c "npm run db:migrate"
+
+db-studio:
+	docker compose run --rm api sh -c "npm run db:studio"
