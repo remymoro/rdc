@@ -1,0 +1,12 @@
+node_modules
+dist
+.nx/cache
+.nx/workspace-data
+.angular
+.env
+.env.*
+!.env.example
+coverage
+*.log
+.git
+.vscode
