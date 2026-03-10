@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CentreId } from '@rdc/shared';
+import { CentreId, DomainNotFoundException } from '@rdc/shared';
 import type { ICentreRepository } from '@rdc/shared';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class DesactiverCentreUseCase {
     const centre = await this.centreRepository.findById(centreId);
 
     if (!centre) {
-      throw new Error(`Centre ${id} introuvable`);
+      throw new DomainNotFoundException(`Centre ${id} introuvable`, 'CENTRE_NOT_FOUND');
     }
 
     centre.desactiver();
