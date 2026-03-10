@@ -2,8 +2,16 @@
   "name": "@rdc/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "db:generate": "prisma generate --config apps/api/prisma.config.ts",
+    "db:migrate": "prisma migrate dev --config apps/api/prisma.config.ts",
+    "db:deploy": "prisma migrate deploy --config apps/api/prisma.config.ts",
+    "db:studio": "prisma studio --config apps/api/prisma.config.ts"
+  },
   "private": true,
+  "prisma": {
+    "schema": "apps/api/prisma/schema.prisma"
+  },
   "dependencies": {
     "@angular/common": "~21.1.0",
     "@angular/compiler": "~21.1.0",
@@ -15,7 +23,11 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
     "axios": "^1.6.0",
+    "pg": "^8.20.0",
+    "prisma": "^7.4.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0"
   },
@@ -45,6 +57,7 @@
     "@swc/helpers": "~0.5.18",
     "@types/jest": "^30.0.0",
     "@types/node": "20.19.9",
+    "@types/pg": "^8.18.0",
     "@typescript-eslint/utils": "^8.40.0",
     "angular-eslint": "^21.0.1",
     "eslint": "^9.8.0",
