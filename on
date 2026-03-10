@@ -1,0 +1,41 @@
+[1mdiff --git a/package.json b/package.json[m
+[1mindex 5e769f8..121d4ef 100644[m
+[1m--- a/package.json[m
+[1m+++ b/package.json[m
+[36m@@ -12,6 +12,9 @@[m
+   "prisma": {[m
+     "schema": "apps/api/prisma/schema.prisma"[m
+   },[m
+[32m+[m[32m  "overrides": {[m
+[32m+[m[32m    "serialize-javascript": "7.0.4"[m
+[32m+[m[32m  },[m
+   "dependencies": {[m
+     "@angular/common": "~21.1.0",[m
+     "@angular/compiler": "~21.1.0",[m
+[36m@@ -26,8 +29,8 @@[m
+     "@prisma/adapter-pg": "^7.4.2",[m
+     "@prisma/client": "^7.4.2",[m
+     "axios": "^1.6.0",[m
+[32m+[m[32m    "dotenv": "^17.3.1",[m
+     "pg": "^8.20.0",[m
+[31m-    "prisma": "^7.4.2",[m
+     "reflect-metadata": "^0.1.13",[m
+     "rxjs": "~7.8.0"[m
+   },[m
+[36m@@ -56,7 +59,7 @@[m
+     "@swc/core": "~1.15.5",[m
+     "@swc/helpers": "~0.5.18",[m
+     "@types/jest": "^30.0.0",[m
+[31m-    "@types/node": "20.19.9",[m
+[32m+[m[32m    "@types/node": "^24.12.0",[m
+     "@types/pg": "^8.18.0",[m
+     "@typescript-eslint/utils": "^8.40.0",[m
+     "angular-eslint": "^21.0.1",[m
+[36m@@ -70,6 +73,7 @@[m
+     "jsonc-eslint-parser": "^2.1.0",[m
+     "nx": "22.5.4",[m
+     "prettier": "~3.6.2",[m
+[32m+[m[32m    "prisma": "^7.4.2",[m
+     "ts-jest": "^29.4.0",[m
+     "ts-node": "10.9.1",[m
+     "tslib": "^2.3.0",[m
