@@ -1,4 +1,4 @@
-.PHONY: dev down logs ps db-only db-migrate db-studio
+.PHONY: dev down logs ps db-only db-migrate db-reset db-init db-studio
 
 dev:
 	docker compose up --build
@@ -17,6 +17,12 @@ db-only:
 
 db-migrate:
 	docker compose run --rm api sh -c "npm run db:migrate"
+
+db-reset:
+	docker compose run --rm api sh -c "npm run db:reset"
+
+db-init:
+	docker compose run --rm api sh -c "npm run db:init"
 
 db-studio:
 	docker compose run --rm api sh -c "npm run db:studio"

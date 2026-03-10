@@ -10,7 +10,11 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       PORT: 3000
     volumes:
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
       - ./apps/api/src:/app/apps/api/src
+      - ./apps/api/prisma:/app/apps/api/prisma
+      - ./apps/api/prisma.config.ts:/app/apps/api/prisma.config.ts
       - ./libs:/app/libs
     depends_on:
       db:
@@ -27,7 +31,9 @@ services:
     environment:
       NODE_ENV: development
     volumes:
-      - ./apps/frontend/src:/app/apps/frontend/src
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./apps/frontend:/app/apps/frontend
       - ./libs:/app/libs
     networks:
       - rdc-network

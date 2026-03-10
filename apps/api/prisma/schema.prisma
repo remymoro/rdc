@@ -6,3 +6,24 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Centre {
+  id         String   @id @default(uuid())
+  nom        String
+  ville      String
+  codePostal String
+  adresse    String
+  telephone  String?
+  email      String?
+  statut     StatutCentre @default(ACTIF)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([nom, ville, codePostal, adresse])
+}
+
+enum StatutCentre {
+  ACTIF
+  INACTIF
+  ARCHIVE
+}
