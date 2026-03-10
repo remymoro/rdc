@@ -3,7 +3,7 @@ import { CreerCentreUseCase } from '../../../application/use-cases/creer-centre.
 import { ListerCentresUseCase } from '../../../application/use-cases/lister-centres.usecase';
 import { DesactiverCentreUseCase } from '../../../application/use-cases/desactiver-centre.usecase';
 import { ArchiverCentreUseCase } from '../../../application/use-cases/archiver-centre.usecase';
-import { CreerCentreDto } from '@rdc/shared';
+import { CreerCentreRequest } from '../dtos/creer-centre.request';
 
 @Controller('centres')
 export class CentreController {
@@ -16,8 +16,8 @@ export class CentreController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async creer(@Body() dto: CreerCentreDto) {
-    return this.creerCentre.execute(dto);
+  async creer(@Body() body: CreerCentreRequest) {
+    return this.creerCentre.execute(body);
   }
 
   @Get()

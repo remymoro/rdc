@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Centre, CreerCentreDto, CentreDto } from '@rdc/shared';
+import { Centre, CreerCentreDto, CentreDto, DomainConflictException } from '@rdc/shared';
 import type { ICentreRepository } from '@rdc/shared';
 import { randomUUID } from 'crypto';
 
@@ -10,6 +10,20 @@ export class CreerCentreUseCase {
   ) {}
 
   async execute(dto: CreerCentreDto): Promise<CentreDto> {
+    const existing = await this.centreRepository.findByUniqueKey({
+      nom: dto.nom.trim(),
+      ville: dto.ville.trim(),
+      codePostal: dto.codePostal.trim(),
+      adresse: dto.adresse.trim(),
+    });
+
+    if (existing) {
+      throw new DomainConflictException(
+        `Centre déjà existant: ${dto.nom} (${dto.codePostal} ${dto.ville})`,
+        'CENTRE_ALREADY_EXISTS',
+      );
+    }
+
     const centre = Centre.create({
       id: randomUUID(),
       nom: dto.nom,

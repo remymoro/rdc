@@ -27,6 +27,37 @@ export class CentrePrismaRepository implements ICentreRepository {
     } as CentreProps);
   }
 
+  async findByUniqueKey(params: {
+    nom: string;
+    ville: string;
+    codePostal: string;
+    adresse: string;
+  }): Promise<Centre | null> {
+    const data = await this.prisma.centre.findFirst({
+      where: {
+        nom: params.nom,
+        ville: params.ville,
+        codePostal: params.codePostal,
+        adresse: params.adresse,
+      },
+    });
+
+    if (!data) return null;
+
+    return Centre.reconstituer({
+      id: CentreId.create(data.id),
+      nom: Nom.create(data.nom),
+      ville: data.ville,
+      codePostal: CodePostal.create(data.codePostal),
+      adresse: data.adresse,
+      telephone: data.telephone ?? undefined,
+      email: data.email ?? undefined,
+      statut: data.statut as StatutCentre,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    } as CentreProps);
+  }
+
   async findAll(): Promise<Centre[]> {
     const data = await this.prisma.centre.findMany({
       orderBy: { nom: 'asc' },
