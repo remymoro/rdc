@@ -12,6 +12,9 @@
   "prisma": {
     "schema": "apps/api/prisma/schema.prisma"
   },
+  "overrides": {
+    "serialize-javascript": "7.0.4"
+  },
   "dependencies": {
     "@angular/common": "~21.1.0",
     "@angular/compiler": "~21.1.0",
@@ -26,8 +29,8 @@
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "axios": "^1.6.0",
+    "dotenv": "^17.3.1",
     "pg": "^8.20.0",
-    "prisma": "^7.4.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0"
   },
@@ -56,7 +59,7 @@
     "@swc/core": "~1.15.5",
     "@swc/helpers": "~0.5.18",
     "@types/jest": "^30.0.0",
-    "@types/node": "20.19.9",
+    "@types/node": "^24.12.0",
     "@types/pg": "^8.18.0",
     "@typescript-eslint/utils": "^8.40.0",
     "angular-eslint": "^21.0.1",
@@ -70,6 +73,7 @@
     "jsonc-eslint-parser": "^2.1.0",
     "nx": "22.5.4",
     "prettier": "~3.6.2",
+    "prisma": "^7.4.2",
     "ts-jest": "^29.4.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",

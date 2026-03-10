@@ -130,6 +130,8 @@ make down       # docker compose down
 make logs       # docker compose logs -f
 make ps         # docker compose ps
 make db-only    # PostgreSQL uniquement
+make db-migrate # migrations Prisma (depuis Docker)
+make db-studio  # Prisma Studio (depuis Docker)
 
 # Nx
 npx nx serve api
@@ -147,6 +149,8 @@ npx prisma migrate dev
 npx prisma generate
 npx prisma studio
 ```
+
+Recommandation : lancer Prisma depuis Docker (même réseau que Postgres, pas de souci `db:5432` vs `localhost`).
 
 ## Workflow Git
 
@@ -185,7 +189,7 @@ PORT=3000
 NODE_ENV=development
 ```
 
-> Note : `DATABASE_URL` est consommée par le service API via `docker-compose.yml`.
+> Note : `DATABASE_URL` (host `db`) est fait pour les services Docker. Pour lancer Prisma depuis ta machine, préfère `make db-migrate` / `make db-studio`.
 
 ## Docker — hot reload
 
