@@ -1,17 +1,25 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CentreDto } from '@rdc/shared';
+import { CentreId, CentreDto, ModifierCentreDto, DomainNotFoundException } from '@rdc/shared';
 import type { ICentreRepository } from '@rdc/shared';
 
 @Injectable()
-export class ListerCentresUseCase {
+export class ModifierCentreUseCase {
   constructor(
     @Inject('ICentreRepository') private readonly centreRepository: ICentreRepository,
   ) {}
 
-  async execute(): Promise<CentreDto[]> {
-    const centres = await this.centreRepository.findAll();
+  async execute(id: string, dto: ModifierCentreDto): Promise<CentreDto> {
+    const centreId = CentreId.create(id);
+    const centre = await this.centreRepository.findById(centreId);
 
-    return centres.map(centre => ({
+    if (!centre) {
+      throw new DomainNotFoundException(`Centre ${id} introuvable`, 'CENTRE_NOT_FOUND');
+    }
+
+    centre.modifier(dto);
+    await this.centreRepository.save(centre);
+
+    return {
       id: centre.id.value,
       nom: centre.nom.value,
       ville: centre.ville.value,
@@ -22,6 +30,6 @@ export class ListerCentresUseCase {
       statut: centre.statut,
       createdAt: centre.createdAt,
       updatedAt: centre.updatedAt,
-    }));
+    };
   }
 }
