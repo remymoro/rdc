@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: apps/frontend/Dockerfile
     ports:
-      - "4200:4200"
+      - "4200:80"
     environment:
       NODE_ENV: development
     volumes:
