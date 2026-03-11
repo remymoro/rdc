@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CentreDto, CreerCentreDto } from '@rdc/shared';
+import { CentreDto, CreerCentreDto, ModifierCentreDto } from '@rdc/shared';
 import { CentreRepository } from '../../domain/centre.repository';
 
 @Injectable()
@@ -15,6 +15,10 @@ export class CentreHttpRepository extends CentreRepository {
 
   creer(dto: CreerCentreDto): Observable<CentreDto> {
     return this.http.post<CentreDto>(this.apiUrl, dto);
+  }
+
+  modifier(id: string, dto: ModifierCentreDto): Observable<CentreDto> {
+    return this.http.patch<CentreDto>(`${this.apiUrl}/${id}`, dto);
   }
 
   desactiver(id: string): Observable<void> {

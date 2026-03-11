@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { CentreDto, CreerCentreDto } from '@rdc/shared';
+import { CentreDto, CreerCentreDto, ModifierCentreDto } from '@rdc/shared';
 import { CentreRepository } from '../../domain/centre.repository';
 
 @Injectable({ providedIn: 'root' })
@@ -43,6 +43,21 @@ export class CentreFacade {
       },
       error: (err) => {
         this.error.set(err.error?.message ?? 'Erreur lors de la création');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  modifier(id: string, dto: ModifierCentreDto): void {
+    this.loading.set(true);
+    this.error.set(null);
+    this.repo.modifier(id, dto).subscribe({
+      next: (centre) => {
+        this.centres.update(list => list.map(c => c.id === id ? centre : c));
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.error?.message ?? 'Erreur lors de la modification');
         this.loading.set(false);
       },
     });
