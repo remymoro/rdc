@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ICentreRepository, Centre, CentreId, CentreProps, Nom, CodePostal, StatutCentre } from '@rdc/shared';
+import { ICentreRepository, Centre, CentreId, CentreProps, Nom, CodePostal, Ville, Adresse, Telephone, Email, StatutCentre } from '@rdc/shared';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -13,18 +13,7 @@ export class CentrePrismaRepository implements ICentreRepository {
 
     if (!data) return null;
 
-    return Centre.reconstituer({
-      id: CentreId.create(data.id),
-      nom: Nom.create(data.nom),
-      ville: data.ville,
-      codePostal: CodePostal.create(data.codePostal),
-      adresse: data.adresse,
-      telephone: data.telephone ?? undefined,
-      email: data.email ?? undefined,
-      statut: data.statut as StatutCentre,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    } as CentreProps);
+    return Centre.reconstituer(this.toProps(data));
   }
 
   async findByUniqueKey(params: {
@@ -44,18 +33,7 @@ export class CentrePrismaRepository implements ICentreRepository {
 
     if (!data) return null;
 
-    return Centre.reconstituer({
-      id: CentreId.create(data.id),
-      nom: Nom.create(data.nom),
-      ville: data.ville,
-      codePostal: CodePostal.create(data.codePostal),
-      adresse: data.adresse,
-      telephone: data.telephone ?? undefined,
-      email: data.email ?? undefined,
-      statut: data.statut as StatutCentre,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    } as CentreProps);
+    return Centre.reconstituer(this.toProps(data));
   }
 
   async findAll(): Promise<Centre[]> {
@@ -63,18 +41,7 @@ export class CentrePrismaRepository implements ICentreRepository {
       orderBy: { nom: 'asc' },
     });
 
-    return data.map(d => Centre.reconstituer({
-      id: CentreId.create(d.id),
-      nom: Nom.create(d.nom),
-      ville: d.ville,
-      codePostal: CodePostal.create(d.codePostal),
-      adresse: d.adresse,
-      telephone: d.telephone ?? undefined,
-      email: d.email ?? undefined,
-      statut: d.statut as StatutCentre,
-      createdAt: d.createdAt,
-      updatedAt: d.updatedAt,
-    } as CentreProps));
+    return data.map(d => Centre.reconstituer(this.toProps(d)));
   }
 
   async save(centre: Centre): Promise<void> {
@@ -83,20 +50,20 @@ export class CentrePrismaRepository implements ICentreRepository {
       create: {
         id: centre.id.value,
         nom: centre.nom.value,
-        ville: centre.ville,
+        ville: centre.ville.value,
         codePostal: centre.codePostal.value,
-        adresse: centre.adresse,
-        telephone: centre.telephone,
-        email: centre.email,
+        adresse: centre.adresse.value,
+        telephone: centre.telephone?.value,
+        email: centre.email?.value,
         statut: centre.statut,
       },
       update: {
         nom: centre.nom.value,
-        ville: centre.ville,
+        ville: centre.ville.value,
         codePostal: centre.codePostal.value,
-        adresse: centre.adresse,
-        telephone: centre.telephone,
-        email: centre.email,
+        adresse: centre.adresse.value,
+        telephone: centre.telephone?.value,
+        email: centre.email?.value,
         statut: centre.statut,
         updatedAt: centre.updatedAt,
       },
@@ -107,5 +74,31 @@ export class CentrePrismaRepository implements ICentreRepository {
     await this.prisma.centre.delete({
       where: { id: id.value },
     });
+  }
+
+  private toProps(data: {
+    id: string;
+    nom: string;
+    ville: string;
+    codePostal: string;
+    adresse: string;
+    telephone: string | null;
+    email: string | null;
+    statut: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }): CentreProps {
+    return {
+      id: CentreId.create(data.id),
+      nom: Nom.create(data.nom),
+      ville: Ville.create(data.ville),
+      codePostal: CodePostal.create(data.codePostal),
+      adresse: Adresse.create(data.adresse),
+      telephone: data.telephone ? Telephone.create(data.telephone) : undefined,
+      email: data.email ? Email.create(data.email) : undefined,
+      statut: data.statut as StatutCentre,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 }

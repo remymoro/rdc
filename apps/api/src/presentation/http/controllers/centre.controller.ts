@@ -1,15 +1,18 @@
 import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { CreerCentreUseCase } from '../../../application/use-cases/creer-centre.usecase';
 import { ListerCentresUseCase } from '../../../application/use-cases/lister-centres.usecase';
+import { ModifierCentreUseCase } from '../../../application/use-cases/modifier-centre.usecase';
 import { DesactiverCentreUseCase } from '../../../application/use-cases/desactiver-centre.usecase';
 import { ArchiverCentreUseCase } from '../../../application/use-cases/archiver-centre.usecase';
 import { CreerCentreRequest } from '../dtos/creer-centre.request';
+import { ModifierCentreRequest } from '../dtos/modifier-centre.request';
 
 @Controller('centres')
 export class CentreController {
   constructor(
     private readonly creerCentre: CreerCentreUseCase,
     private readonly listerCentres: ListerCentresUseCase,
+    private readonly modifierCentre: ModifierCentreUseCase,
     private readonly desactiverCentre: DesactiverCentreUseCase,
     private readonly archiverCentre: ArchiverCentreUseCase,
   ) {}
@@ -23,6 +26,11 @@ export class CentreController {
   @Get()
   async lister() {
     return this.listerCentres.execute();
+  }
+
+  @Patch(':id')
+  async modifier(@Param('id') id: string, @Body() body: ModifierCentreRequest) {
+    return this.modifierCentre.execute(id, body);
   }
 
   @Patch(':id/desactiver')

@@ -8,32 +8,36 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class CreerCentreRequest {
+export class ModifierCentreRequest {
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  nom!: string;
+  nom?: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  ville!: string;
+  ville?: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   @IsPostalCode('FR')
-  codePostal!: string;
+  codePostal?: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
-  adresse!: string;
+  adresse?: string;
 
   @IsOptional()
   @IsPhoneNumber('FR')
-  telephone?: string;
+  telephone?: string | null;
 
   @IsOptional()
   @IsEmail()
-  email?: string;
+  email?: string | null;
 }
