@@ -21,8 +21,6 @@ export type { CentreDto } from './domain/dtos/centre.dto';
 
 // Exceptions
 export { DomainException } from './domain/exceptions/domain.exception';
-// Test utilities
-export { expectDomainCode } from './test-utils';
 export { DomainValidationException } from './domain/exceptions/domain-validation.exception';
 export { DomainNotFoundException } from './domain/exceptions/domain-not-found.exception';
 export { DomainConflictException } from './domain/exceptions/domain-conflict.exception';
