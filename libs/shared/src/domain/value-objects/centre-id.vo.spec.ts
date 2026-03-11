@@ -1,4 +1,6 @@
-import { CentreId, DomainValidationException, expectDomainCode } from '@rdc/shared';
+import { CentreId } from './centre-id.vo';
+import { DomainValidationException } from '../exceptions/domain-validation.exception';
+import { expectDomainCode } from '../../test-utils';
 
 const UUID_VALIDE = '550e8400-e29b-41d4-a716-446655440000';
 

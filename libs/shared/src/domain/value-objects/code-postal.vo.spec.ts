@@ -1,4 +1,6 @@
-import { CodePostal, DomainValidationException, expectDomainCode } from '@rdc/shared';
+import { CodePostal } from './code-postal.vo';
+import { DomainValidationException } from '../exceptions/domain-validation.exception';
+import { expectDomainCode } from '../../test-utils';
 
 describe('CodePostal', () => {
   describe('create', () => {

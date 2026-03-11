@@ -1,4 +1,6 @@
-import { Email, DomainValidationException, expectDomainCode } from '@rdc/shared';
+import { Email } from './email.vo';
+import { DomainValidationException } from '../exceptions/domain-validation.exception';
+import { expectDomainCode } from '../../test-utils';
 
 describe('Email', () => {
   describe('normalisation', () => {

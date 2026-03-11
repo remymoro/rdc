@@ -1,4 +1,6 @@
-import { Telephone, DomainValidationException, expectDomainCode } from '@rdc/shared';
+import { Telephone } from './telephone.vo';
+import { DomainValidationException } from '../exceptions/domain-validation.exception';
+import { expectDomainCode } from '../../test-utils';
 
 describe('Telephone', () => {
   describe('normalisation vers E.164', () => {

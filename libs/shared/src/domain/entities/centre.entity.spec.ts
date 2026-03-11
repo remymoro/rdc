@@ -1,4 +1,6 @@
-import { Centre, StatutCentre, DomainValidationException, expectDomainCode } from '@rdc/shared';
+import { Centre, StatutCentre } from './centre.entity';
+import { DomainValidationException } from '../exceptions/domain-validation.exception';
+import { expectDomainCode } from '../../test-utils';
 
 const PARAMS_VALIDES = {
   id: '550e8400-e29b-41d4-a716-446655440000',

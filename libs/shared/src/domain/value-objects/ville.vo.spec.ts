@@ -1,4 +1,6 @@
-import { Ville, DomainValidationException, expectDomainCode } from '@rdc/shared';
+import { Ville } from './ville.vo';
+import { DomainValidationException } from '../exceptions/domain-validation.exception';
+import { expectDomainCode } from '../../test-utils';
 
 describe('Ville', () => {
   describe('create', () => {
