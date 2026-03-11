@@ -1,14 +1,15 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { CreerCentreDto } from '@rdc/shared';
+import { CentreDto, CreerCentreDto, ModifierCentreDto } from '@rdc/shared';
 import { CentreFacade } from '../../../application/facades/centre.facade';
 import { CentreFormComponent } from '../centre-form/centre-form.component';
+import { CentreEditFormComponent } from '../centre-edit-form/centre-edit-form.component';
 
 @Component({
   selector: 'app-centre-list',
   standalone: true,
-  imports: [ButtonModule, TagModule, CentreFormComponent],
+  imports: [ButtonModule, TagModule, CentreFormComponent, CentreEditFormComponent],
   template: `
     <div class="p-6 max-w-6xl mx-auto">
       <div class="flex items-center justify-between mb-6">
@@ -51,6 +52,14 @@ import { CentreFormComponent } from '../centre-form/centre-form.component';
                   </td>
                   <td class="px-4 py-3">
                     <div class="flex gap-2">
+                      @if (centre.statut !== 'ARCHIVE') {
+                        <p-button
+                          label="Éditer"
+                          severity="secondary"
+                          size="small"
+                          icon="pi pi-pencil"
+                          (onClick)="ouvrirEdition(centre)" />
+                      }
                       @if (centre.statut === 'ACTIF') {
                         <p-button
                           label="Désactiver"
@@ -80,10 +89,18 @@ import { CentreFormComponent } from '../centre-form/centre-form.component';
         </div>
       }
     </div>
+
+    <app-centre-edit-form
+      [(visible)]="editVisible"
+      [centre]="centreSelectionne()"
+      (centreModifier)="onCentreModifier($event)" />
   `,
 })
 export class CentreListComponent implements OnInit {
   readonly facade = inject(CentreFacade);
+
+  readonly editVisible = signal(false);
+  readonly centreSelectionne = signal<CentreDto | null>(null);
 
   ngOnInit(): void {
     this.facade.charger();
@@ -91,6 +108,15 @@ export class CentreListComponent implements OnInit {
 
   onCentreCreer(dto: CreerCentreDto): void {
     this.facade.creer(dto);
+  }
+
+  ouvrirEdition(centre: CentreDto): void {
+    this.centreSelectionne.set(centre);
+    this.editVisible.set(true);
+  }
+
+  onCentreModifier(event: { id: string; dto: ModifierCentreDto }): void {
+    this.facade.modifier(event.id, event.dto);
   }
 
   desactiver(id: string): void {

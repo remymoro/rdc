@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CentreId, CentreDto, ModifierCentreDto, DomainNotFoundException } from '@rdc/shared';
+import { CentreId, CentreDto, ModifierCentreDto, DomainNotFoundException, DomainConflictException } from '@rdc/shared';
 import type { ICentreRepository } from '@rdc/shared';
 
 @Injectable()
@@ -17,6 +17,21 @@ export class ModifierCentreUseCase {
     }
 
     centre.modifier(dto);
+
+    const doublon = await this.centreRepository.findByUniqueKey({
+      nom: centre.nom.value,
+      ville: centre.ville.value,
+      codePostal: centre.codePostal.value,
+      adresse: centre.adresse.value,
+    });
+
+    if (doublon && doublon.id.value !== id) {
+      throw new DomainConflictException(
+        `Centre déjà existant: ${centre.nom.value} (${centre.codePostal.value} ${centre.ville.value})`,
+        'CENTRE_ALREADY_EXISTS',
+      );
+    }
+
     await this.centreRepository.save(centre);
 
     return {
