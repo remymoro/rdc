@@ -54,5 +54,4 @@ jobs:
             cd ~/rdc/staging
             docker compose pull
             docker compose up -d
-            docker compose run --rm api sh -c "npx prisma migrate deploy --config apps/api/prisma.config.ts"
             docker image prune -f

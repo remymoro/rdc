@@ -13,4 +13,4 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/prisma ./prisma
 COPY --from=builder /app/apps/api/prisma.config.ts ./
 EXPOSE 3000
-CMD ["node", "main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --config prisma.config.ts && node main.js"]

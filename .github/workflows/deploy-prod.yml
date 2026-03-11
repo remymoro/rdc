@@ -1,0 +1,28 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Confirmer le deploy en production ? (oui)'
+        required: true
+        default: 'non'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.event.inputs.confirm == 'oui'
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/rdc/prod
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
