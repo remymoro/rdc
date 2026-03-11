@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { CreerCentreDto } from '@rdc/shared';
 import { CentreFacade } from '../../../application/facades/centre.facade';
 import { CentreFormComponent } from '../centre-form/centre-form.component';
 
@@ -88,7 +89,7 @@ export class CentreListComponent implements OnInit {
     this.facade.charger();
   }
 
-  onCentreCreer(dto: any): void {
+  onCentreCreer(dto: CreerCentreDto): void {
     this.facade.creer(dto);
   }
 
