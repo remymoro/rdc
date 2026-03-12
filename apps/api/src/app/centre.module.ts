@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../infrastructure/prisma/prisma.module';
+import { AuthModule } from './auth.module';
 import { CentrePrismaRepository } from '../infrastructure/repositories/centre.prisma.repository';
 import { CreerCentreUseCase } from '../application/use-cases/creer-centre.usecase';
 import { ListerCentresUseCase } from '../application/use-cases/lister-centres.usecase';
@@ -10,7 +11,7 @@ import { ActiverCentreUseCase } from '../application/use-cases/activer-centre.us
 import { CentreController } from '../presentation/http/controllers/centre.controller';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, AuthModule],
   controllers: [CentreController],
   providers: [
     {

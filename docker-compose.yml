@@ -9,6 +9,11 @@ services:
       NODE_ENV: development
       DATABASE_URL: ${DATABASE_URL}
       PORT: 3000
+      AUTH_ACCESS_TOKEN_SECRET: ${AUTH_ACCESS_TOKEN_SECRET:-dev-access-secret-change-me}
+      AUTH_REFRESH_TOKEN_SECRET: ${AUTH_REFRESH_TOKEN_SECRET:-dev-refresh-secret-change-me}
+      AUTH_ACCESS_TOKEN_TTL_SECONDS: ${AUTH_ACCESS_TOKEN_TTL_SECONDS:-900}
+      AUTH_REFRESH_TOKEN_TTL_SECONDS: ${AUTH_REFRESH_TOKEN_TTL_SECONDS:-604800}
+      AUTH_PROTECT_CENTRES: ${AUTH_PROTECT_CENTRES:-false}
     volumes:
       - ./package.json:/app/package.json
       - ./package-lock.json:/app/package-lock.json

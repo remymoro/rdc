@@ -11,6 +11,8 @@ import { ActiverCentreUseCase } from '../../../application/use-cases/activer-cen
 import { DomainExceptionFilter } from '../filters/domain-exception.filter';
 import { RequestValidationExceptionFilter } from '../filters/request-validation-exception.filter';
 import { CentreController } from './centre.controller';
+import { AccessTokenGuard } from '../guards/access-token.guard';
+import { CentreAccessGuard } from '../guards/centre-access.guard';
 
 const UUID = '550e8400-e29b-41d4-a716-446655440000';
 
@@ -41,6 +43,8 @@ describe('CentreController', () => {
   const mockDesactiverCentre = { execute: jest.fn() };
   const mockArchiverCentre = { execute: jest.fn() };
   const mockActiverCentre = { execute: jest.fn() };
+  const mockAccessTokenGuard = { canActivate: jest.fn().mockReturnValue(true) };
+  const mockCentreAccessGuard = { canActivate: jest.fn().mockReturnValue(true) };
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,6 +56,8 @@ describe('CentreController', () => {
         { provide: DesactiverCentreUseCase, useValue: mockDesactiverCentre },
         { provide: ArchiverCentreUseCase, useValue: mockArchiverCentre },
         { provide: ActiverCentreUseCase, useValue: mockActiverCentre },
+        { provide: AccessTokenGuard, useValue: mockAccessTokenGuard },
+        { provide: CentreAccessGuard, useValue: mockCentreAccessGuard },
       ],
     }).compile();
 

@@ -18,12 +18,48 @@ model Centre {
   statut     StatutCentre @default(ACTIF)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  responsables User[]
 
   @@unique([nom, ville, codePostal, adresse])
+}
+
+model User {
+  id           String                @id @default(uuid())
+  email        String                @unique
+  passwordHash String
+  role         UserRole              @default(RESPONSABLE_CENTRE)
+  centreId     String?
+  isActive     Boolean               @default(true)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  sessions     RefreshTokenSession[]
+  centre       Centre?               @relation(fields: [centreId], references: [id], onDelete: SetNull)
+
+  @@index([centreId])
+}
+
+model RefreshTokenSession {
+  id          String   @id
+  tokenHash   String
+  userId      String
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  replacedBy  String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 enum StatutCentre {
   ACTIF
   INACTIF
   ARCHIVE
+}
+
+enum UserRole {
+  ADMIN
+  RESPONSABLE_CENTRE
 }
