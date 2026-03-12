@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { routes } from './app.routes';
-import { CentreRepository } from './domain/centre.repository';
+import { CentreRepository } from './application/ports/centre.repository';
 import { CentreHttpRepository } from './infrastructure/repositories/centre.http.repository';
 
 export const appConfig: ApplicationConfig = {

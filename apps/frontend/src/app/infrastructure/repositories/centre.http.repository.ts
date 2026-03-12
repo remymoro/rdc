@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CentreDto, CreerCentreDto, ModifierCentreDto } from '@rdc/shared';
-import { CentreRepository } from '../../domain/centre.repository';
+import { CentreRepository } from '../../application/ports/centre.repository';
 
 @Injectable()
 export class CentreHttpRepository extends CentreRepository {
