@@ -1,0 +1,54 @@
+services:
+  api:
+    image: ghcr.io/remymoro/rdc-api:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH_ACCESS_TOKEN_SECRET: ${AUTH_ACCESS_TOKEN_SECRET}
+      AUTH_REFRESH_TOKEN_SECRET: ${AUTH_REFRESH_TOKEN_SECRET}
+      AUTH_ACCESS_TOKEN_TTL_SECONDS: ${AUTH_ACCESS_TOKEN_TTL_SECONDS:-900}
+      AUTH_REFRESH_TOKEN_TTL_SECONDS: ${AUTH_REFRESH_TOKEN_TTL_SECONDS:-604800}
+      AUTH_PROTECT_CENTRES: ${AUTH_PROTECT_CENTRES:-true}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - rdc-network
+
+  frontend:
+    image: ghcr.io/remymoro/rdc-frontend:latest
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    networks:
+      - rdc-network
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rdc-network
+
+networks:
+  rdc-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
