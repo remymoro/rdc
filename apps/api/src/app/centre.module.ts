@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from './prisma/prisma.module';
-import { CentrePrismaRepository } from './repositories/centre.prisma.repository';
+import { PrismaModule } from '../infrastructure/prisma/prisma.module';
+import { CentrePrismaRepository } from '../infrastructure/repositories/centre.prisma.repository';
 import { CreerCentreUseCase } from '../application/use-cases/creer-centre.usecase';
 import { ListerCentresUseCase } from '../application/use-cases/lister-centres.usecase';
 import { DesactiverCentreUseCase } from '../application/use-cases/desactiver-centre.usecase';
