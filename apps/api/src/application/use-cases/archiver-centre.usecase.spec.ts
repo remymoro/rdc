@@ -1,5 +1,5 @@
-import { Centre, DomainNotFoundException, StatutCentre } from '@rdc/shared';
-import type { ICentreRepository } from '@rdc/shared';
+import { Centre, DomainNotFoundException, StatutCentre } from '@rdc/domain';
+import type { ICentreRepository } from '@rdc/domain';
 import { ArchiverCentreUseCase } from './archiver-centre.usecase';
 
 const UUID = '550e8400-e29b-41d4-a716-446655440000';

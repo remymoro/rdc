@@ -1,6 +1,6 @@
 import { Email } from './email.vo';
 import { DomainValidationException } from '../exceptions/domain-validation.exception';
-import { expectDomainCode } from '../../test-utils';
+import { expectDomainCode } from '../test-utils';
 
 describe('Email', () => {
   describe('normalisation', () => {

@@ -1,5 +1,5 @@
-import { Centre, DomainConflictException } from '@rdc/shared';
-import type { ICentreRepository } from '@rdc/shared';
+import { Centre, DomainConflictException } from '@rdc/domain';
+import type { ICentreRepository } from '@rdc/domain';
 import { CreerCentreUseCase } from './creer-centre.usecase';
 
 const UUID = '550e8400-e29b-41d4-a716-446655440000';

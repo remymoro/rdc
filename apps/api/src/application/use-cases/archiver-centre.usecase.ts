@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CentreId, DomainNotFoundException } from '@rdc/shared';
-import type { ICentreRepository } from '@rdc/shared';
+import { CentreId, DomainNotFoundException, ICentreRepository } from '@rdc/domain';
 
 @Injectable()
 export class ArchiverCentreUseCase {

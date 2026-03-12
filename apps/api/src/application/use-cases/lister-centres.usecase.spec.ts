@@ -1,5 +1,5 @@
-import { Centre } from '@rdc/shared';
-import type { ICentreRepository } from '@rdc/shared';
+import { Centre } from '@rdc/domain';
+import type { ICentreRepository } from '@rdc/domain';
 import { ListerCentresUseCase } from './lister-centres.usecase';
 
 const mockRepo: jest.Mocked<ICentreRepository> = {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ICentreRepository, Centre, CentreId, CentreProps, Nom, CodePostal, Ville, Adresse, Telephone, Email, StatutCentre } from '@rdc/shared';
+import { ICentreRepository, Centre, CentreId, CentreProps, Nom, CodePostal, Ville, Adresse, Telephone, Email, StatutCentre } from '@rdc/domain';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { DomainConflictException, DomainNotFoundException } from '@rdc/shared';
+import { DomainConflictException, DomainNotFoundException } from '@rdc/domain';
 import { CreerCentreUseCase } from '../../../application/use-cases/creer-centre.usecase';
 import { ListerCentresUseCase } from '../../../application/use-cases/lister-centres.usecase';
 import { ModifierCentreUseCase } from '../../../application/use-cases/modifier-centre.usecase';
