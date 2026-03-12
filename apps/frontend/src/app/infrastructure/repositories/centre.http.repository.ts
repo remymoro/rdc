@@ -25,6 +25,10 @@ export class CentreHttpRepository extends CentreRepository {
     return this.http.patch<void>(`${this.apiUrl}/${id}/desactiver`, {});
   }
 
+  activer(id: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${id}/activer`, {});
+  }
+
   archiver(id: string): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${id}/archiver`, {});
   }
