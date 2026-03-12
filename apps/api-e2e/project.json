@@ -2,6 +2,7 @@
   "name": "api-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
+  "tags": ["scope:e2e"],
   "implicitDependencies": ["api"],
   "targets": {
     "e2e": {

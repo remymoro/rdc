@@ -36,6 +36,11 @@ export default [
               sourceTag: 'scope:frontend',
               onlyDependOnLibsWithTags: ['scope:shared'],
             },
+            // Les tests e2e testent via HTTP — accès aux DTOs uniquement (boîte noire)
+            {
+              sourceTag: 'scope:e2e',
+              onlyDependOnLibsWithTags: ['scope:shared'],
+            },
           ],
         },
       ],
