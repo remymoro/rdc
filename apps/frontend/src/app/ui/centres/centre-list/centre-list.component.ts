@@ -3,6 +3,7 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { CentreDto, CreerCentreDto, ModifierCentreDto } from '@rdc/shared';
 import { CentreFacade } from '../../../application/facades/centre.facade';
+import { AuthFacade } from '../../../application/facades/auth.facade';
 import { CentreFormComponent } from '../centre-form/centre-form.component';
 import { CentreEditFormComponent } from '../centre-edit-form/centre-edit-form.component';
 
@@ -24,7 +25,9 @@ import { CentreEditFormComponent } from '../centre-edit-form/centre-edit-form.co
       }
 
       <div class="mb-6">
-        <app-centre-form (centreCreer)="onCentreCreer($event)" />
+        @if (auth.isAdmin()) {
+          <app-centre-form (centreCreer)="onCentreCreer($event)" />
+        }
       </div>
 
       @if (facade.loading()) {
@@ -51,38 +54,42 @@ import { CentreEditFormComponent } from '../centre-edit-form/centre-edit-form.co
                     <p-tag [value]="centre.statut" [severity]="statutSeverity(centre.statut)" />
                   </td>
                   <td class="px-4 py-3">
-                    <div class="flex gap-2">
-                      @if (centre.statut !== 'ARCHIVE') {
-                        <p-button
-                          label="Éditer"
-                          severity="secondary"
-                          size="small"
-                          icon="pi pi-pencil"
-                          (onClick)="ouvrirEdition(centre)" />
-                      }
-                      @if (centre.statut === 'ACTIF') {
-                        <p-button
-                          label="Désactiver"
-                          severity="warn"
-                          size="small"
-                          (onClick)="desactiver(centre.id)" />
-                      }
-                      @if (centre.statut === 'INACTIF') {
-                        <p-button
-                          label="Réactiver"
-                          severity="success"
-                          size="small"
-                          icon="pi pi-play"
-                          (onClick)="activer(centre.id)" />
-                      }
-                      @if (centre.statut !== 'ARCHIVE') {
-                        <p-button
-                          label="Archiver"
-                          severity="danger"
-                          size="small"
-                          (onClick)="archiver(centre.id)" />
-                      }
-                    </div>
+                    @if (auth.isAdmin()) {
+                      <div class="flex gap-2">
+                        @if (centre.statut !== 'ARCHIVE') {
+                          <p-button
+                            label="Éditer"
+                            severity="secondary"
+                            size="small"
+                            icon="pi pi-pencil"
+                            (onClick)="ouvrirEdition(centre)" />
+                        }
+                        @if (centre.statut === 'ACTIF') {
+                          <p-button
+                            label="Désactiver"
+                            severity="warn"
+                            size="small"
+                            (onClick)="desactiver(centre.id)" />
+                        }
+                        @if (centre.statut === 'INACTIF') {
+                          <p-button
+                            label="Réactiver"
+                            severity="success"
+                            size="small"
+                            icon="pi pi-play"
+                            (onClick)="activer(centre.id)" />
+                        }
+                        @if (centre.statut !== 'ARCHIVE') {
+                          <p-button
+                            label="Archiver"
+                            severity="danger"
+                            size="small"
+                            (onClick)="archiver(centre.id)" />
+                        }
+                      </div>
+                    } @else {
+                      <span class="text-xs text-gray-400">Lecture seule</span>
+                    }
                   </td>
                 </tr>
               } @empty {
@@ -106,6 +113,7 @@ import { CentreEditFormComponent } from '../centre-edit-form/centre-edit-form.co
 })
 export class CentreListComponent implements OnInit {
   readonly facade = inject(CentreFacade);
+  readonly auth = inject(AuthFacade);
 
   readonly editVisible = signal(false);
   readonly centreSelectionne = signal<CentreDto | null>(null);
