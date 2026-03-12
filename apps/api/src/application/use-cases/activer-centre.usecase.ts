@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CentreId, DomainNotFoundException, ICentreRepository } from '@rdc/domain';
 
 @Injectable()
-export class ArchiverCentreUseCase {
+export class ActiverCentreUseCase {
   constructor(
     @Inject('ICentreRepository') private readonly centreRepository: ICentreRepository,
   ) {}
@@ -15,7 +15,7 @@ export class ArchiverCentreUseCase {
       throw new DomainNotFoundException(`Centre ${id} introuvable`, 'CENTRE_NOT_FOUND');
     }
 
-    centre.archiver();
+    centre.activer();
     await this.centreRepository.save(centre);
   }
 }

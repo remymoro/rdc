@@ -1,5 +1,5 @@
 import { expect } from '@jest/globals';
-import { DomainException } from './domain/exceptions/domain.exception';
+import { DomainException } from './exceptions/domain.exception';
 
 export function expectDomainCode(fn: () => void, code: string): void {
   let caught: unknown;

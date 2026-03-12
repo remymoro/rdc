@@ -1,6 +1,6 @@
 import { Ville } from './ville.vo';
 import { DomainValidationException } from '../exceptions/domain-validation.exception';
-import { expectDomainCode } from '../../test-utils';
+import { expectDomainCode } from '../test-utils';
 
 describe('Ville', () => {
   describe('create', () => {

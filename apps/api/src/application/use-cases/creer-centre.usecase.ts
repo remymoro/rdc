@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Centre, CreerCentreDto, CentreDto, DomainConflictException } from '@rdc/shared';
-import type { ICentreRepository } from '@rdc/shared';
+import { Centre, DomainConflictException, ICentreRepository } from '@rdc/domain';
+import type { CreerCentreDto, CentreDto } from '@rdc/shared';
 import { randomUUID } from 'crypto';
 
 @Injectable()

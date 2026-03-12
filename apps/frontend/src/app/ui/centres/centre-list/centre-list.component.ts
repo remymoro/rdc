@@ -67,6 +67,14 @@ import { CentreEditFormComponent } from '../centre-edit-form/centre-edit-form.co
                           size="small"
                           (onClick)="desactiver(centre.id)" />
                       }
+                      @if (centre.statut === 'INACTIF') {
+                        <p-button
+                          label="Réactiver"
+                          severity="success"
+                          size="small"
+                          icon="pi pi-play"
+                          (onClick)="activer(centre.id)" />
+                      }
                       @if (centre.statut !== 'ARCHIVE') {
                         <p-button
                           label="Archiver"
@@ -121,6 +129,10 @@ export class CentreListComponent implements OnInit {
 
   desactiver(id: string): void {
     this.facade.desactiver(id);
+  }
+
+  activer(id: string): void {
+    this.facade.activer(id);
   }
 
   archiver(id: string): void {

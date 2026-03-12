@@ -16,9 +16,30 @@ export default [
           enforceBuildableLibDependency: true,
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [
+            // Le domaine ne dépend de rien
             {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
+              sourceTag: 'scope:domain',
+              onlyDependOnLibsWithTags: [],
+            },
+            // shared ne dépend de rien
+            {
+              sourceTag: 'scope:shared',
+              onlyDependOnLibsWithTags: [],
+            },
+            // L'API peut dépendre du domaine et des DTOs partagés
+            {
+              sourceTag: 'scope:api',
+              onlyDependOnLibsWithTags: ['scope:domain', 'scope:shared'],
+            },
+            // Le frontend ne peut dépendre QUE des DTOs partagés — jamais du domaine
+            {
+              sourceTag: 'scope:frontend',
+              onlyDependOnLibsWithTags: ['scope:shared'],
+            },
+            // Les tests e2e testent via HTTP — accès aux DTOs uniquement (boîte noire)
+            {
+              sourceTag: 'scope:e2e',
+              onlyDependOnLibsWithTags: ['scope:shared'],
             },
           ],
         },

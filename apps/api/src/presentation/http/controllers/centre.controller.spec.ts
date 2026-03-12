@@ -1,12 +1,13 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { DomainConflictException, DomainNotFoundException } from '@rdc/shared';
+import { DomainConflictException, DomainNotFoundException } from '@rdc/domain';
 import { CreerCentreUseCase } from '../../../application/use-cases/creer-centre.usecase';
 import { ListerCentresUseCase } from '../../../application/use-cases/lister-centres.usecase';
 import { ModifierCentreUseCase } from '../../../application/use-cases/modifier-centre.usecase';
 import { DesactiverCentreUseCase } from '../../../application/use-cases/desactiver-centre.usecase';
 import { ArchiverCentreUseCase } from '../../../application/use-cases/archiver-centre.usecase';
+import { ActiverCentreUseCase } from '../../../application/use-cases/activer-centre.usecase';
 import { DomainExceptionFilter } from '../filters/domain-exception.filter';
 import { RequestValidationExceptionFilter } from '../filters/request-validation-exception.filter';
 import { CentreController } from './centre.controller';
@@ -39,6 +40,7 @@ describe('CentreController', () => {
   const mockModifierCentre = { execute: jest.fn() };
   const mockDesactiverCentre = { execute: jest.fn() };
   const mockArchiverCentre = { execute: jest.fn() };
+  const mockActiverCentre = { execute: jest.fn() };
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -49,6 +51,7 @@ describe('CentreController', () => {
         { provide: ModifierCentreUseCase, useValue: mockModifierCentre },
         { provide: DesactiverCentreUseCase, useValue: mockDesactiverCentre },
         { provide: ArchiverCentreUseCase, useValue: mockArchiverCentre },
+        { provide: ActiverCentreUseCase, useValue: mockActiverCentre },
       ],
     }).compile();
 
@@ -225,6 +228,32 @@ describe('CentreController', () => {
 
       const res = await request(app.getHttpServer())
         .patch(`/centres/${UUID}/archiver`)
+        .expect(404);
+
+      expect(res.body.code).toBe('CENTRE_NOT_FOUND');
+    });
+  });
+
+  // ─── PATCH /centres/:id/activer ──────────────────────────────────────────────
+
+  describe('PATCH /centres/:id/activer', () => {
+    it('204 — réactive le centre', async () => {
+      mockActiverCentre.execute.mockResolvedValue(undefined);
+
+      await request(app.getHttpServer())
+        .patch(`/centres/${UUID}/activer`)
+        .expect(204);
+
+      expect(mockActiverCentre.execute).toHaveBeenCalledWith(UUID);
+    });
+
+    it('404 — centre introuvable', async () => {
+      mockActiverCentre.execute.mockRejectedValue(
+        new DomainNotFoundException('Centre not found', 'CENTRE_NOT_FOUND'),
+      );
+
+      const res = await request(app.getHttpServer())
+        .patch(`/centres/${UUID}/activer`)
         .expect(404);
 
       expect(res.body.code).toBe('CENTRE_NOT_FOUND');

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CentreId, CentreDto, ModifierCentreDto, DomainNotFoundException, DomainConflictException } from '@rdc/shared';
-import type { ICentreRepository } from '@rdc/shared';
+import { CentreId, DomainNotFoundException, DomainConflictException, ICentreRepository } from '@rdc/domain';
+import type { CentreDto, ModifierCentreDto } from '@rdc/shared';
 
 @Injectable()
 export class ModifierCentreUseCase {

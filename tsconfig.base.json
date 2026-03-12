@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@rdc/shared": ["libs/shared/src/index.ts"]
+      "@rdc/shared": ["libs/shared/src/index.ts"],
+      "@rdc/domain": ["libs/domain/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

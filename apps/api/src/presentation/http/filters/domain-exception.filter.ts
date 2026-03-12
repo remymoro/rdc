@@ -9,7 +9,7 @@ import {
   DomainException,
   DomainNotFoundException,
   DomainValidationException,
-} from '@rdc/shared';
+} from '@rdc/domain';
 
 @Catch(
   DomainException,

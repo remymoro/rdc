@@ -1,6 +1,6 @@
 import { Telephone } from './telephone.vo';
 import { DomainValidationException } from '../exceptions/domain-validation.exception';
-import { expectDomainCode } from '../../test-utils';
+import { expectDomainCode } from '../test-utils';
 
 describe('Telephone', () => {
   describe('normalisation vers E.164', () => {

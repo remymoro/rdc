@@ -6,6 +6,7 @@ import { ListerCentresUseCase } from '../application/use-cases/lister-centres.us
 import { DesactiverCentreUseCase } from '../application/use-cases/desactiver-centre.usecase';
 import { ModifierCentreUseCase } from '../application/use-cases/modifier-centre.usecase';
 import { ArchiverCentreUseCase } from '../application/use-cases/archiver-centre.usecase';
+import { ActiverCentreUseCase } from '../application/use-cases/activer-centre.usecase';
 import { CentreController } from '../presentation/http/controllers/centre.controller';
 
 @Module({
@@ -21,6 +22,7 @@ import { CentreController } from '../presentation/http/controllers/centre.contro
     ModifierCentreUseCase,
     DesactiverCentreUseCase,
     ArchiverCentreUseCase,
+    ActiverCentreUseCase,
   ],
 })
 export class CentreModule {}

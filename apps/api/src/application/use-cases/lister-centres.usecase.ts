@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CentreDto } from '@rdc/shared';
-import type { ICentreRepository } from '@rdc/shared';
+import type { ICentreRepository } from '@rdc/domain';
+import type { CentreDto } from '@rdc/shared';
 
 @Injectable()
 export class ListerCentresUseCase {

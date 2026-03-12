@@ -76,6 +76,19 @@ export class CentreFacade {
     });
   }
 
+  activer(id: string): void {
+    this.repo.activer(id).subscribe({
+      next: () => {
+        this.centres.update(list =>
+          list.map(c => c.id === id ? { ...c, statut: 'ACTIF' as const } : c)
+        );
+      },
+      error: (err) => {
+        this.error.set(err.error?.message ?? 'Erreur lors de la réactivation');
+      },
+    });
+  }
+
   archiver(id: string): void {
     this.repo.archiver(id).subscribe({
       next: () => {
