@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { CreerCentreUseCase } from '../../../application/use-cases/creer-centre.usecase';
 import { ListerCentresUseCase } from '../../../application/use-cases/lister-centres.usecase';
 import { ModifierCentreUseCase } from '../../../application/use-cases/modifier-centre.usecase';
@@ -7,8 +8,10 @@ import { ArchiverCentreUseCase } from '../../../application/use-cases/archiver-c
 import { ActiverCentreUseCase } from '../../../application/use-cases/activer-centre.usecase';
 import { CreerCentreRequest } from '../dtos/creer-centre.request';
 import { ModifierCentreRequest } from '../dtos/modifier-centre.request';
+import { CentreAccessGuard } from '../guards/centre-access.guard';
 
 @Controller('centres')
+@UseGuards(CentreAccessGuard)
 export class CentreController {
   constructor(
     private readonly creerCentre: CreerCentreUseCase,
@@ -26,8 +29,17 @@ export class CentreController {
   }
 
   @Get()
-  async lister() {
-    return this.listerCentres.execute();
+  async lister(@Req() req: Request & { user?: { role: string; centreId?: string } }) {
+    const centres = await this.listerCentres.execute();
+
+    if (req.user?.role === 'RESPONSABLE_CENTRE') {
+      if (!req.user.centreId) {
+        return [];
+      }
+      return centres.filter(centre => centre.id === req.user?.centreId);
+    }
+
+    return centres;
   }
 
   @Patch(':id')
