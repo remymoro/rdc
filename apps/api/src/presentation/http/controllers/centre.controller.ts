@@ -4,6 +4,7 @@ import { ListerCentresUseCase } from '../../../application/use-cases/lister-cent
 import { ModifierCentreUseCase } from '../../../application/use-cases/modifier-centre.usecase';
 import { DesactiverCentreUseCase } from '../../../application/use-cases/desactiver-centre.usecase';
 import { ArchiverCentreUseCase } from '../../../application/use-cases/archiver-centre.usecase';
+import { ActiverCentreUseCase } from '../../../application/use-cases/activer-centre.usecase';
 import { CreerCentreRequest } from '../dtos/creer-centre.request';
 import { ModifierCentreRequest } from '../dtos/modifier-centre.request';
 
@@ -15,6 +16,7 @@ export class CentreController {
     private readonly modifierCentre: ModifierCentreUseCase,
     private readonly desactiverCentre: DesactiverCentreUseCase,
     private readonly archiverCentre: ArchiverCentreUseCase,
+    private readonly activerCentre: ActiverCentreUseCase,
   ) {}
 
   @Post()
@@ -43,5 +45,11 @@ export class CentreController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async archiver(@Param('id') id: string) {
     return this.archiverCentre.execute(id);
+  }
+
+  @Patch(':id/activer')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async activer(@Param('id') id: string) {
+    return this.activerCentre.execute(id);
   }
 }
