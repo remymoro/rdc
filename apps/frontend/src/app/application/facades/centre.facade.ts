@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { CentreDto, CreerCentreDto, ModifierCentreDto } from '@rdc/shared';
-import { CentreRepository } from '../../domain/centre.repository';
+import { CentreRepository } from '../../application/ports/centre.repository';
 
 @Injectable({ providedIn: 'root' })
 export class CentreFacade {

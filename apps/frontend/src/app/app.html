@@ -1,1 +1,18 @@
-<router-outlet></router-outlet>
+<div class="min-h-screen bg-gray-50">
+  @if (auth.isAuthenticated()) {
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">RDC</p>
+          <p class="text-sm font-medium text-gray-800">
+            {{ auth.user()?.email }}
+            <span class="text-xs text-gray-500">({{ auth.user()?.role }})</span>
+          </p>
+        </div>
+        <p-button label="Déconnexion" icon="pi pi-sign-out" severity="secondary" size="small" (onClick)="logout()" />
+      </div>
+    </header>
+  }
+
+  <router-outlet></router-outlet>
+</div>
