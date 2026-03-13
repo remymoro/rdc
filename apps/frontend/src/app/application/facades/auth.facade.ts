@@ -7,6 +7,7 @@ const TOKEN_STORAGE_KEY = 'rdc.auth.v1.accessToken';
 @Injectable({ providedIn: 'root' })
 export class AuthFacade {
   private readonly authRepo = inject(AuthRepository);
+  private initPromise: Promise<void> | null = null;
 
   readonly accessToken = signal<string | null>(this.readToken());
   readonly user = signal<AuthUserDto | null>(null);
@@ -17,25 +18,46 @@ export class AuthFacade {
   readonly isAuthenticated = computed(() => !!this.accessToken() && !!this.user());
   readonly isAdmin = computed(() => this.user()?.role === 'ADMIN');
   readonly isResponsableCentre = computed(() => this.user()?.role === 'RESPONSABLE_CENTRE');
+  readonly homeUrl = computed(() => {
+    if (this.isAdmin()) {
+      return '/admin';
+    }
+    if (this.isResponsableCentre()) {
+      return '/centre';
+    }
+    return '/login';
+  });
 
-  init(): void {
+  init(): Promise<void> {
+    if (this.initialized()) {
+      return Promise.resolve();
+    }
+
+    if (this.initPromise) {
+      return this.initPromise;
+    }
+
     const token = this.accessToken();
     if (!token) {
       this.initialized.set(true);
-      return;
+      return Promise.resolve();
     }
 
     this.loading.set(true);
-    this.authRepo.me(token).subscribe({
-      next: user => {
-        this.user.set(user);
-        this.loading.set(false);
-        this.initialized.set(true);
-      },
-      error: () => {
-        this.tryRefresh();
-      },
+    this.initPromise = new Promise(resolve => {
+      this.authRepo.me(token).subscribe({
+        next: user => {
+          this.user.set(user);
+          this.finishInit();
+          resolve();
+        },
+        error: () => {
+          this.tryRefresh(resolve);
+        },
+      });
     });
+
+    return this.initPromise;
   }
 
   login(dto: LoginDto): void {
@@ -58,9 +80,16 @@ export class AuthFacade {
   }
 
   logout(): void {
+    const hadToken = !!this.accessToken();
+    this.clearSession();
+    this.initialized.set(true);
+
+    if (!hadToken) {
+      return;
+    }
+
     this.authRepo.logout().subscribe({
-      next: () => this.clearSession(),
-      error: () => this.clearSession(),
+      error: () => undefined,
     });
   }
 
@@ -68,19 +97,25 @@ export class AuthFacade {
     this.error.set(null);
   }
 
-  private tryRefresh(): void {
+  private tryRefresh(resolve?: () => void): void {
     this.authRepo.refresh().subscribe({
       next: session => {
         this.setSession(session.auth.accessToken, session.user);
-        this.loading.set(false);
-        this.initialized.set(true);
+        this.finishInit();
+        resolve?.();
       },
       error: () => {
         this.clearSession();
-        this.loading.set(false);
-        this.initialized.set(true);
+        this.finishInit();
+        resolve?.();
       },
     });
+  }
+
+  private finishInit(): void {
+    this.loading.set(false);
+    this.initialized.set(true);
+    this.initPromise = null;
   }
 
   private setSession(accessToken: string, user: AuthUserDto): void {
