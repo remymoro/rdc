@@ -28,6 +28,17 @@ export class ResponsableCentreFacade {
     this.success.set(null);
   }
 
+  private getErrorMessage(err: unknown, fallback: string): string {
+    if (typeof err === 'object' && err !== null && 'error' in err) {
+      const error = (err as { error?: { message?: unknown } }).error;
+      if (typeof error?.message === 'string' && error.message.trim()) {
+        return error.message;
+      }
+    }
+
+    return fallback;
+  }
+
   async charger(filters?: ResponsableCentreFilters): Promise<boolean> {
     this.loading.set(true);
     this.error.set(null);
@@ -36,8 +47,8 @@ export class ResponsableCentreFacade {
       const data = await firstValueFrom(this.repo.findAll(filters));
       this.responsables.set(data);
       return true;
-    } catch (err: any) {
-      this.error.set(err?.error?.message ?? 'Erreur lors du chargement des responsables');
+    } catch (err: unknown) {
+      this.error.set(this.getErrorMessage(err, 'Erreur lors du chargement des responsables'));
       return false;
     } finally {
       this.loading.set(false);
@@ -54,8 +65,8 @@ export class ResponsableCentreFacade {
       this.responsables.update(list => [created, ...list]);
       this.success.set('Responsable cree avec succes');
       return created;
-    } catch (err: any) {
-      this.error.set(err?.error?.message ?? 'Erreur lors de la creation');
+    } catch (err: unknown) {
+      this.error.set(this.getErrorMessage(err, 'Erreur lors de la creation'));
       return null;
     } finally {
       this.submitting.set(false);
@@ -72,8 +83,8 @@ export class ResponsableCentreFacade {
       this.responsables.update(list => list.map(item => (item.id === id ? updated : item)));
       this.success.set('Responsable mis a jour');
       return updated;
-    } catch (err: any) {
-      this.error.set(err?.error?.message ?? 'Erreur lors de la modification');
+    } catch (err: unknown) {
+      this.error.set(this.getErrorMessage(err, 'Erreur lors de la modification'));
       return null;
     } finally {
       this.submitting.set(false);
@@ -92,8 +103,8 @@ export class ResponsableCentreFacade {
       );
       this.success.set('Responsable desactive');
       return true;
-    } catch (err: any) {
-      this.error.set(err?.error?.message ?? 'Erreur lors de la suppression');
+    } catch (err: unknown) {
+      this.error.set(this.getErrorMessage(err, 'Erreur lors de la suppression'));
       return false;
     } finally {
       this.submitting.set(false);
@@ -110,8 +121,8 @@ export class ResponsableCentreFacade {
       this.responsables.update(list => list.map(item => (item.id === id ? updated : item)));
       this.success.set('Responsable reactive');
       return updated;
-    } catch (err: any) {
-      this.error.set(err?.error?.message ?? 'Erreur lors de la reactivation');
+    } catch (err: unknown) {
+      this.error.set(this.getErrorMessage(err, 'Erreur lors de la reactivation'));
       return null;
     } finally {
       this.submitting.set(false);

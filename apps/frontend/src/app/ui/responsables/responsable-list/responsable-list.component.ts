@@ -268,8 +268,8 @@ import { ResponsableCentreFacade } from '../../../application/facades/responsabl
                       </td>
                       <td>{{ responsable.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
                       <td>
-                        <div class="flex justify-end gap-2" (click)="$event.stopPropagation()">
-                          <button class="btn btn-sm btn-outline" type="button" (click)="ouvrirEdition(responsable)">
+                        <div class="flex justify-end gap-2">
+                          <button class="btn btn-sm btn-outline" type="button" (click)="ouvrirEditionDepuisListe($event, responsable)">
                             Modifier
                           </button>
                           @if (responsable.isActive) {
@@ -277,7 +277,7 @@ import { ResponsableCentreFacade } from '../../../application/facades/responsabl
                               class="btn btn-sm btn-error btn-outline"
                               type="button"
                               [disabled]="facade.submitting()"
-                              (click)="desactiver(responsable)">
+                              (click)="desactiverDepuisListe($event, responsable)">
                               Desactiver
                             </button>
                           } @else {
@@ -285,7 +285,7 @@ import { ResponsableCentreFacade } from '../../../application/facades/responsabl
                               class="btn btn-sm btn-success btn-outline"
                               type="button"
                               [disabled]="facade.submitting()"
-                              (click)="reactiver(responsable)">
+                              (click)="reactiverDepuisListe($event, responsable)">
                               Reactiver
                             </button>
                           }
@@ -496,6 +496,11 @@ export class ResponsableListComponent implements OnInit {
     this.editVisible.set(true);
   }
 
+  ouvrirEditionDepuisListe(event: Event, responsable: ResponsableCentreDto): void {
+    event.stopPropagation();
+    this.ouvrirEdition(responsable);
+  }
+
   fermerEdition(): void {
     this.editVisible.set(false);
     this.editForm = {};
@@ -541,11 +546,21 @@ export class ResponsableListComponent implements OnInit {
     }
   }
 
+  async desactiverDepuisListe(event: Event, responsable: ResponsableCentreDto): Promise<void> {
+    event.stopPropagation();
+    await this.desactiver(responsable);
+  }
+
   async reactiver(responsable: ResponsableCentreDto): Promise<void> {
     const updated = await this.facade.reactiver(responsable.id);
     if (updated) {
       this.selectedResponsableId.set(updated.id);
     }
+  }
+
+  async reactiverDepuisListe(event: Event, responsable: ResponsableCentreDto): Promise<void> {
+    event.stopPropagation();
+    await this.reactiver(responsable);
   }
 
   nomCentre(centreId: string): string {
