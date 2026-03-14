@@ -51,3 +51,5 @@ Thumbs.db
 
 # Prisma generated client
 apps/api/src/infrastructure/prisma/generated
+
+.nx/polygraph

@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+      target: dev
     ports:
       - "3000:3000"
     environment:
@@ -31,8 +32,9 @@ services:
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
+      target: dev
     ports:
-      - "4200:80"
+      - "4200:4200"
     environment:
       NODE_ENV: development
     volumes:
