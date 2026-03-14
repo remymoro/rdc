@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { CreerMagasinDto } from '@rdc/shared';
+import { CreerMagasinDto, MagasinDto, MagasinImageDto } from '@rdc/shared';
 import { CentreFacade } from '../../../application/facades/centre.facade';
 import { MagasinFacade } from '../../../application/facades/magasin.facade';
 
@@ -30,10 +30,6 @@ import { MagasinFacade } from '../../../application/facades/magasin.facade';
           </div>
         </div>
       </section>
-
-      <div class="alert alert-info shadow-sm">
-        <span>Version Angular provisoire: repository mock local en attendant les endpoints NestJS magasin.</span>
-      </div>
 
       @if (centreFacade.error() || magasinFacade.error()) {
         <div class="alert alert-warning shadow-sm">
@@ -130,7 +126,7 @@ import { MagasinFacade } from '../../../application/facades/magasin.facade';
       </article>
 
       <section class="grid gap-4">
-        @for (magasin of magasinFacade.magasins(); track magasin.id) {
+        @for (magasin of sortedMagasins(); track magasin.id) {
           <article class="card border border-base-300 bg-base-100 shadow-sm">
             <div class="card-body gap-4">
               <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -156,6 +152,58 @@ import { MagasinFacade } from '../../../application/facades/magasin.facade';
                   }
                 </div>
               </div>
+
+              <div class="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                <div class="space-y-3">
+                  <div class="rounded-2xl border border-base-300 bg-base-200/40 p-4">
+                    <p class="text-xs uppercase tracking-[0.24em] text-base-content/45">Contact</p>
+                    <p class="mt-2 text-sm font-medium">{{ magasin.email || 'Email non renseigne' }}</p>
+                    <p class="mt-1 text-sm text-base-content/65">{{ magasin.telephone || 'Telephone non renseigne' }}</p>
+                  </div>
+
+                  <label class="form-control gap-2">
+                    <span class="label-text">Ajouter une image</span>
+                    <input
+                      type="file"
+                      class="file-input file-input-bordered w-full"
+                      accept="image/*"
+                      (change)="onImageSelected($event, magasin.id)" />
+                  </label>
+                </div>
+
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <p class="text-xs uppercase tracking-[0.24em] text-base-content/45">Galerie</p>
+                    <span class="badge badge-ghost">{{ magasin.images.length }} image(s)</span>
+                  </div>
+
+                  @if (magasin.images.length) {
+                    <div class="grid gap-3 sm:grid-cols-2">
+                      @for (image of sortedImages(magasin); track image.id) {
+                        <article class="rounded-2xl border border-base-300 bg-base-100 p-3 shadow-sm">
+                          <img
+                            class="h-36 w-full rounded-xl object-cover"
+                            [src]="image.url"
+                            [alt]="'Image ' + magasin.nom" />
+                          <div class="mt-3 flex items-center justify-between gap-3 text-xs text-base-content/55">
+                            <span>Ordre {{ image.ordre }}</span>
+                            <button
+                              class="btn btn-xs btn-outline btn-error"
+                              type="button"
+                              (click)="supprimerImage(magasin.id, image.id)">
+                              Supprimer
+                            </button>
+                          </div>
+                        </article>
+                      }
+                    </div>
+                  } @else {
+                    <div class="rounded-2xl border border-dashed border-base-300 p-4 text-sm text-base-content/60">
+                      Aucune image pour ce magasin.
+                    </div>
+                  }
+                </div>
+              </div>
             </div>
           </article>
         } @empty {
@@ -170,10 +218,16 @@ import { MagasinFacade } from '../../../application/facades/magasin.facade';
 export class AdminMagasinsPageComponent implements OnInit {
   readonly centreFacade = inject(CentreFacade);
   readonly magasinFacade = inject(MagasinFacade);
+  private readonly loadedCentreIdsKey = signal('');
 
   readonly actifsCount = computed(() => this.magasinFacade.magasins().filter(magasin => magasin.statut === 'ACTIF').length);
   readonly inactifsCount = computed(() => this.magasinFacade.magasins().filter(magasin => magasin.statut === 'INACTIF').length);
   readonly archivesCount = computed(() => this.magasinFacade.magasins().filter(magasin => magasin.statut === 'ARCHIVE').length);
+  readonly sortedMagasins = computed(() =>
+    [...this.magasinFacade.magasins()].sort((a, b) =>
+      a.centreId.localeCompare(b.centreId) || a.nom.localeCompare(b.nom)
+    )
+  );
 
   readonly createForm: CreerMagasinDto = {
     nom: '',
@@ -185,9 +239,22 @@ export class AdminMagasinsPageComponent implements OnInit {
     centreId: '',
   };
 
+  constructor() {
+    effect(() => {
+      const centreIds = this.centreFacade.centres().map(centre => centre.id).sort();
+      const key = centreIds.join(',');
+
+      if (!key || key === this.loadedCentreIdsKey()) {
+        return;
+      }
+
+      this.loadedCentreIdsKey.set(key);
+      this.magasinFacade.charger({ centreIds });
+    });
+  }
+
   ngOnInit(): void {
     this.centreFacade.charger();
-    this.magasinFacade.charger();
   }
 
   canCreate(): boolean {
@@ -236,7 +303,32 @@ export class AdminMagasinsPageComponent implements OnInit {
     this.magasinFacade.archiver(id);
   }
 
+  onImageSelected(event: Event, magasinId: string): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    this.magasinFacade.ajouterImage(magasinId, file);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  supprimerImage(magasinId: string, imageId: string): void {
+    this.magasinFacade.supprimerImage(magasinId, imageId);
+  }
+
   nomCentre(centreId: string): string {
     return this.centreFacade.centres().find(centre => centre.id === centreId)?.nom ?? centreId;
+  }
+
+  sortedImages(magasin: MagasinDto): MagasinImageDto[] {
+    return [...magasin.images].sort(
+      (a, b) => a.ordre - b.ordre || new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
   }
 }

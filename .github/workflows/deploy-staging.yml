@@ -67,6 +67,12 @@ jobs:
           script: |
             set -e
             cd ~/rdc/staging
+
+            # Injection idempotente du secret Azure dans le .env staging
+            grep -q "AZURE_STORAGE_CONNECTION_STRING=" .env \
+              && sed -i "s|AZURE_STORAGE_CONNECTION_STRING=.*|AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STAGING }}|" .env \
+              || echo "AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STAGING }}" >> .env
+
             docker compose -f docker-compose.staging.yml pull
             docker compose -f docker-compose.staging.yml up -d --remove-orphans
             docker image prune -f

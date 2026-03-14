@@ -25,5 +25,6 @@ import { CentreController } from '../presentation/http/controllers/centre.contro
     ArchiverCentreUseCase,
     ActiverCentreUseCase,
   ],
+  exports: ['ICentreRepository'],
 })
 export class CentreModule {}

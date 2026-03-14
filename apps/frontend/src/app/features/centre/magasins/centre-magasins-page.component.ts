@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { MagasinDto, MagasinImageDto } from '@rdc/shared';
 import { AuthFacade } from '../../../application/facades/auth.facade';
 import { MagasinFacade } from '../../../application/facades/magasin.facade';
 
@@ -15,7 +16,7 @@ import { MagasinFacade } from '../../../application/facades/magasin.facade';
           <span class="badge badge-outline">Mes magasins</span>
           <h1 class="text-3xl font-semibold text-base-content">Premiere vue des magasins rattaches a votre centre</h1>
           <p class="max-w-2xl text-sm text-base-content/65">
-            Cette page prepare le futur pilotage centre par magasin. Pour l'instant, les donnees sont maintenues en mock Angular local.
+            Cette page s'appuie maintenant sur les endpoints magasin du backend et sur la galerie d'images associee.
           </p>
         </div>
         <a class="btn btn-outline" routerLink="/centre">Retour a la vue d'ensemble</a>
@@ -80,9 +81,20 @@ import { MagasinFacade } from '../../../application/facades/magasin.facade';
                   <div class="rounded-2xl border border-base-300 bg-base-200/50 p-4">
                     <p class="text-xs uppercase tracking-[0.24em] text-base-content/45">Images</p>
                     <p class="mt-2 text-lg font-medium">{{ magasin.images.length }}</p>
-                    <p class="mt-1 text-sm text-base-content/65">Preparation du futur media catalogue</p>
+                    <p class="mt-1 text-sm text-base-content/65">Photos associees au magasin</p>
                   </div>
                 </div>
+
+                @if (magasin.images.length) {
+                  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    @for (image of sortedImages(magasin); track image.id) {
+                      <img
+                        class="h-36 w-full rounded-2xl border border-base-300 object-cover"
+                        [src]="image.url"
+                        [alt]="'Image ' + magasin.nom" />
+                    }
+                  </div>
+                }
               </div>
             </article>
           }
@@ -110,6 +122,15 @@ export class CentreMagasinsPageComponent implements OnInit {
   readonly actifsCount = computed(() => this.magasinsDuCentre().filter(magasin => magasin.statut === 'ACTIF').length);
 
   ngOnInit(): void {
-    this.magasinFacade.charger();
+    const centreId = this.auth.user()?.centreId;
+    if (centreId) {
+      this.magasinFacade.charger({ centreId });
+    }
+  }
+
+  sortedImages(magasin: MagasinDto): MagasinImageDto[] {
+    return [...magasin.images].sort(
+      (a, b) => a.ordre - b.ordre || new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
   }
 }

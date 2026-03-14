@@ -5,6 +5,7 @@ import { MagasinFilters, MagasinRepository } from '../ports/magasin.repository';
 @Injectable({ providedIn: 'root' })
 export class MagasinFacade {
   private readonly repo = inject(MagasinRepository);
+  private lastFilters: MagasinFilters | undefined;
 
   readonly magasins = signal<MagasinDto[]>([]);
   readonly loading = signal(false);
@@ -14,6 +15,7 @@ export class MagasinFacade {
   readonly count = computed(() => this.magasins().length);
 
   charger(filters?: MagasinFilters): void {
+    this.lastFilters = filters;
     this.loading.set(true);
     this.error.set(null);
 
@@ -27,6 +29,10 @@ export class MagasinFacade {
         this.loading.set(false);
       },
     });
+  }
+
+  recharger(): void {
+    this.charger(this.lastFilters);
   }
 
   creer(dto: CreerMagasinDto): void {
@@ -96,6 +102,52 @@ export class MagasinFacade {
       },
       error: err => {
         this.error.set(err?.error?.message ?? "Erreur lors de l'archivage du magasin");
+      },
+    });
+  }
+
+  ajouterImage(magasinId: string, file: File): void {
+    this.error.set(null);
+
+    this.repo.ajouterImage(magasinId, file).subscribe({
+      next: image => {
+        this.magasins.update(list =>
+          list.map(item =>
+            item.id === magasinId
+              ? {
+                  ...item,
+                  images: [...item.images, image].sort((a, b) => a.ordre - b.ordre),
+                  updatedAt: new Date(),
+                }
+              : item
+          )
+        );
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? "Erreur lors de l'ajout de l'image");
+      },
+    });
+  }
+
+  supprimerImage(magasinId: string, imageId: string): void {
+    this.error.set(null);
+
+    this.repo.supprimerImage(magasinId, imageId).subscribe({
+      next: () => {
+        this.magasins.update(list =>
+          list.map(item =>
+            item.id === magasinId
+              ? {
+                  ...item,
+                  images: item.images.filter(image => image.id !== imageId),
+                  updatedAt: new Date(),
+                }
+              : item
+          )
+        );
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? "Erreur lors de la suppression de l'image");
       },
     });
   }

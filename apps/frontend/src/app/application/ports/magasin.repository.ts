@@ -1,8 +1,9 @@
 import { Observable } from 'rxjs';
-import { CreerMagasinDto, MagasinDto, ModifierMagasinDto } from '@rdc/shared';
+import { CreerMagasinDto, MagasinDto, MagasinImageDto, ModifierMagasinDto } from '@rdc/shared';
 
 export interface MagasinFilters {
   centreId?: string;
+  centreIds?: string[];
 }
 
 export abstract class MagasinRepository {
@@ -12,4 +13,6 @@ export abstract class MagasinRepository {
   abstract desactiver(id: string): Observable<void>;
   abstract activer(id: string): Observable<void>;
   abstract archiver(id: string): Observable<void>;
+  abstract ajouterImage(magasinId: string, file: File): Observable<MagasinImageDto>;
+  abstract supprimerImage(magasinId: string, imageId: string): Observable<void>;
 }

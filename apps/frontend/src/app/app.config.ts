@@ -12,7 +12,7 @@ import { authTokenInterceptor } from './infrastructure/http/auth-token.intercept
 import { AuthFacade } from './application/facades/auth.facade';
 import { MagasinRepository } from './application/ports/magasin.repository';
 import { ResponsableCentreRepository } from './application/ports/responsable-centre.repository';
-import { MagasinMockRepository } from './infrastructure/repositories/magasin.mock.repository';
+import { MagasinHttpRepository } from './infrastructure/repositories/magasin.http.repository';
 import { ResponsableCentreHttpRepository } from './infrastructure/repositories/responsable-centre.http.repository';
 
 export const appConfig: ApplicationConfig = {
@@ -36,7 +36,7 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: MagasinRepository,
-      useClass: MagasinMockRepository,
+      useClass: MagasinHttpRepository,
     },
   ],
 };
