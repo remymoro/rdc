@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
@@ -25,10 +26,11 @@ import { ActiverMagasinUseCase } from '../../../application/use-cases/magasin/ac
 import { ArchiverMagasinUseCase } from '../../../application/use-cases/magasin/archiver-magasin.usecase';
 import { AjouterImageMagasinUseCase } from '../../../application/use-cases/magasin/ajouter-image-magasin.usecase';
 import { SupprimerImageMagasinUseCase } from '../../../application/use-cases/magasin/supprimer-image-magasin.usecase';
+import type { IBlobStorageService } from '../../../application/blob-storage/interfaces/blob-storage.port';
 import { CreerMagasinRequest } from '../dtos/creer-magasin.request';
 import { ModifierMagasinRequest } from '../dtos/modifier-magasin.request';
 import { CentreAccessGuard } from '../guards/centre-access.guard';
-import { mapMagasinToDto } from '../mappers/magasin.mapper';
+import { extractBlobName, mapMagasinToDto } from '../mappers/magasin.mapper';
 
 type AuthRequest = Request & { user?: { role: string; centreId?: string } };
 
@@ -45,6 +47,7 @@ export class MagasinController {
     private readonly archiverMagasin: ArchiverMagasinUseCase,
     private readonly ajouterImage: AjouterImageMagasinUseCase,
     private readonly supprimerImage: SupprimerImageMagasinUseCase,
+    @Inject('IBlobStorageService') private readonly blobStorage: IBlobStorageService,
   ) {}
 
   @Post('centres/:centreId/magasins')
@@ -56,7 +59,7 @@ export class MagasinController {
   ) {
     this.assertCentreAccess(req, centreId);
     const magasin = await this.creerMagasin.execute({ ...body, centreId });
-    return mapMagasinToDto(magasin);
+    return mapMagasinToDto(magasin, this.blobStorage);
   }
 
   @Get('centres/:centreId/magasins')
@@ -66,14 +69,14 @@ export class MagasinController {
   ) {
     this.assertCentreAccess(req, centreId);
     const magasins = await this.listerMagasins.execute(centreId);
-    return magasins.map(mapMagasinToDto);
+    return magasins.map(m => mapMagasinToDto(m, this.blobStorage));
   }
 
   @Get('magasins/:id')
   async obtenir(@Param('id') id: string, @Req() req: AuthRequest) {
     const magasin = await this.obtenirMagasin.execute(id);
     this.assertCentreAccess(req, magasin.centreId.value);
-    return mapMagasinToDto(magasin);
+    return mapMagasinToDto(magasin, this.blobStorage);
   }
 
   @Patch('magasins/:id')
@@ -85,7 +88,7 @@ export class MagasinController {
     const existing = await this.obtenirMagasin.execute(id);
     this.assertCentreAccess(req, existing.centreId.value);
     const magasin = await this.modifierMagasin.execute(id, body);
-    return mapMagasinToDto(magasin);
+    return mapMagasinToDto(magasin, this.blobStorage);
   }
 
   @Patch('magasins/:id/desactiver')
@@ -122,11 +125,15 @@ export class MagasinController {
   ) {
     const existing = await this.obtenirMagasin.execute(id);
     this.assertCentreAccess(req, existing.centreId.value);
-    return this.ajouterImage.execute(id, {
+    const image = await this.ajouterImage.execute(id, {
       buffer: file.buffer,
       mimeType: file.mimetype,
       originalName: file.originalname,
     });
+    return {
+      ...image,
+      url: this.blobStorage.generateSasUrl(extractBlobName(image.url)),
+    };
   }
 
   @Delete('magasins/:id/images/:imageId')
