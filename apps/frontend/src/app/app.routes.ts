@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './infrastructure/guards/auth.guard';
-import { roleGuard } from './infrastructure/guards/role.guard';
+import { guestGuard } from './infrastructure/guards/guest.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
+    canActivate: [guestGuard],
     loadComponent: () =>
       import('./ui/auth/login/login.component').then(
         m => m.LoginComponent
@@ -12,76 +12,17 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['ADMIN'] },
-    loadComponent: () =>
-      import('./features/admin/shell/admin-shell.component').then(
-        m => m.AdminShellComponent
+    loadChildren: () =>
+      import('./features/admin/admin.routes').then(
+        m => m.ADMIN_ROUTES
       ),
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        loadComponent: () =>
-          import('./features/admin/dashboard/admin-dashboard.component').then(
-            m => m.AdminDashboardComponent
-          ),
-      },
-      {
-        path: 'centres',
-        loadComponent: () =>
-          import('./features/admin/centres/admin-centres-page.component').then(
-            m => m.AdminCentresPageComponent
-          ),
-      },
-      {
-        path: 'responsables',
-        loadComponent: () =>
-          import('./features/admin/responsables/admin-responsables-page.component').then(
-            m => m.AdminResponsablesPageComponent
-          ),
-      },
-      {
-        path: 'profil',
-        loadComponent: () =>
-          import('./ui/profil/profil.component').then(
-            m => m.ProfilComponent
-          ),
-      },
-    ],
   },
   {
     path: 'centre',
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['RESPONSABLE_CENTRE'] },
-    loadComponent: () =>
-      import('./features/centre/shell/centre-shell.component').then(
-        m => m.CentreShellComponent
+    loadChildren: () =>
+      import('./features/centre/centre.routes').then(
+        m => m.CENTRE_ROUTES
       ),
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        loadComponent: () =>
-          import('./features/centre/dashboard/centre-dashboard.component').then(
-            m => m.CentreDashboardComponent
-          ),
-      },
-      {
-        path: 'mon-centre',
-        loadComponent: () =>
-          import('./features/centre/mon-centre/centre-home.component').then(
-            m => m.CentreHomeComponent
-          ),
-      },
-      {
-        path: 'profil',
-        loadComponent: () =>
-          import('./ui/profil/profil.component').then(
-            m => m.ProfilComponent
-          ),
-      },
-    ],
   },
   {
     path: '',

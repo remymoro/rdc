@@ -1,14 +1,14 @@
-import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthFacade } from '../../application/facades/auth.facade';
 
-export const adminGuard: CanActivateFn = () => {
+export const guestGuard: CanActivateFn = () => {
   const auth = inject(AuthFacade);
   const router = inject(Router);
 
-  if (auth.isAuthenticated() && auth.isAdmin()) {
+  if (!auth.isAuthenticated()) {
     return true;
   }
 
-  return router.createUrlTree(['/centres']);
+  return router.createUrlTree([auth.homeUrl()]);
 };
