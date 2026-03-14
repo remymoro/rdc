@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Post,
   Req,
   Res,
@@ -22,8 +23,9 @@ import { LoginRequest } from '../dtos/login.request';
 import { CreerResponsableRequest } from '../dtos/creer-responsable.request';
 import { AccessTokenGuard } from '../guards/access-token.guard';
 import { getCookieValue } from '../utils/cookies';
-import { TokenService } from '../../../infrastructure/security/token.service';
+import type { ITokenService } from '../../../application/auth/interfaces/token-service.port';
 import { CreerResponsableUseCase } from '../../../application/use-cases/auth/creer-responsable.usecase';
+import { toResponsableDto } from '../mappers/responsable-centre.mapper';
 
 const REFRESH_COOKIE = 'refresh_token';
 
@@ -36,7 +38,7 @@ export class AuthController {
     private readonly logoutUseCase: LogoutUseCase,
     private readonly meUseCase: MeUseCase,
     private readonly creerResponsableUseCase: CreerResponsableUseCase,
-    private readonly tokenService: TokenService,
+    @Inject('ITokenService') private readonly tokenService: ITokenService,
   ) {}
 
   @Post('bootstrap-admin')
@@ -86,7 +88,8 @@ export class AuthController {
       throw new ForbiddenException('Action reservee aux administrateurs');
     }
 
-    return this.creerResponsableUseCase.execute(body);
+    const user = await this.creerResponsableUseCase.execute(body);
+    return toResponsableDto(user);
   }
 
   @Post('logout')
@@ -104,7 +107,13 @@ export class AuthController {
       throw new UnauthorizedException('Utilisateur non authentifie');
     }
 
-    return this.meUseCase.execute(req.user.userId);
+    const user = await this.meUseCase.execute(req.user.userId);
+    return {
+      id: user.id,
+      email: user.email.value,
+      role: user.role,
+      centreId: user.centreId,
+    };
   }
 
   private setRefreshCookie(res: Response, token: string): void {

@@ -1,14 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DomainValidationException, IUserRepository } from '@rdc/domain';
-import type { AuthTokenDto, AuthUserDto } from '@rdc/shared';
+import { DomainValidationException, IUserRepository, UserRole } from '@rdc/domain';
 import { randomUUID } from 'node:crypto';
 import { IRefreshTokenSessionRepository } from '../../auth/interfaces/refresh-token-session.repository';
 import { IPasswordHasher } from '../../auth/interfaces/password-hasher.port';
 import { ITokenService } from '../../auth/interfaces/token-service.port';
 
 export interface RefreshResult {
-  auth: AuthTokenDto;
-  user: AuthUserDto;
+  auth: { accessToken: string; tokenType: 'Bearer'; expiresIn: number };
+  user: { id: string; email: string; role: UserRole; centreId?: string };
   refreshToken: string;
 }
 

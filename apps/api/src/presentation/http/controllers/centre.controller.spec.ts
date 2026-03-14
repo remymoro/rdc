@@ -1,7 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { DomainConflictException, DomainNotFoundException } from '@rdc/domain';
+import { Centre, DomainConflictException, DomainNotFoundException } from '@rdc/domain';
 import { CreerCentreUseCase } from '../../../application/use-cases/centre/creer-centre.usecase';
 import { ListerCentresUseCase } from '../../../application/use-cases/centre/lister-centres.usecase';
 import { ModifierCentreUseCase } from '../../../application/use-cases/centre/modifier-centre.usecase';
@@ -16,16 +16,13 @@ import { CentreAccessGuard } from '../guards/centre-access.guard';
 
 const UUID = '550e8400-e29b-41d4-a716-446655440000';
 
-const centreDto = {
+const centreFixture = () => Centre.create({
   id: UUID,
   nom: 'Centre Bordeaux',
   ville: 'Bordeaux',
   codePostal: '33000',
   adresse: '12 rue de la Paix',
-  statut: 'ACTIF',
-  createdAt: '2024-01-01T00:00:00.000Z',
-  updatedAt: '2024-01-01T00:00:00.000Z',
-};
+});
 
 const validBody = {
   nom: 'Centre Bordeaux',
@@ -80,7 +77,7 @@ describe('CentreController', () => {
 
   describe('POST /centres', () => {
     it('201 — crée un centre et retourne le DTO', async () => {
-      mockCreerCentre.execute.mockResolvedValue(centreDto);
+      mockCreerCentre.execute.mockResolvedValue(centreFixture());
 
       const res = await request(app.getHttpServer())
         .post('/centres')
@@ -128,7 +125,7 @@ describe('CentreController', () => {
 
   describe('GET /centres', () => {
     it('200 — retourne la liste des centres', async () => {
-      mockListerCentres.execute.mockResolvedValue([centreDto]);
+      mockListerCentres.execute.mockResolvedValue([centreFixture()]);
 
       const res = await request(app.getHttpServer())
         .get('/centres')
@@ -153,7 +150,7 @@ describe('CentreController', () => {
 
   describe('PATCH /centres/:id', () => {
     it('200 — modifie partiellement le centre', async () => {
-      const updated = { ...centreDto, nom: 'Nouveau Nom' };
+      const updated = Centre.create({ id: UUID, nom: 'Nouveau Nom', ville: 'Bordeaux', codePostal: '33000', adresse: '12 rue de la Paix' });
       mockModifierCentre.execute.mockResolvedValue(updated);
 
       const res = await request(app.getHttpServer())

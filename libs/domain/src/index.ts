@@ -1,8 +1,8 @@
-// Entities
-export { Centre, StatutCentre } from './entities/centre.entity';
-export type { CentreProps } from './entities/centre.entity';
-export { User, UserRole } from './entities/user.entity';
-export type { UserProps } from './entities/user.entity';
+// Domain aggregates
+export { Centre, StatutCentre } from './centre';
+export type { CentreProps, ICentreRepository } from './centre';
+export { User, UserRole } from './user';
+export type { UserProps, IUserRepository } from './user';
 
 // Value Objects
 export { CentreId } from './value-objects/centre-id.vo';
@@ -12,10 +12,6 @@ export { Ville } from './value-objects/ville.vo';
 export { Adresse } from './value-objects/adresse.vo';
 export { Telephone } from './value-objects/telephone.vo';
 export { Email } from './value-objects/email.vo';
-
-// Interfaces (ports)
-export type { ICentreRepository } from './interfaces/centre.repository';
-export type { IUserRepository } from './interfaces/user.repository';
 
 // Exceptions
 export { DomainException } from './exceptions/domain.exception';

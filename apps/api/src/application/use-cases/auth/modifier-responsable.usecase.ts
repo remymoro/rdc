@@ -9,10 +9,8 @@ import {
   User,
   UserRole,
 } from '@rdc/domain';
-import type { ModifierResponsableCentreDto, ResponsableCentreDto } from '@rdc/shared';
 import { IPasswordHasher } from '../../auth/interfaces/password-hasher.port';
 import { IRefreshTokenSessionRepository } from '../../auth/interfaces/refresh-token-session.repository';
-import { toResponsableDto } from './responsable-centre.mapper';
 
 @Injectable()
 export class ModifierResponsableUseCase {
@@ -23,7 +21,12 @@ export class ModifierResponsableUseCase {
     @Inject('IRefreshTokenSessionRepository') private readonly sessions: IRefreshTokenSessionRepository,
   ) {}
 
-  async execute(id: string, dto: ModifierResponsableCentreDto): Promise<ResponsableCentreDto> {
+  async execute(id: string, dto: {
+    email?: string;
+    password?: string;
+    centreId?: string;
+    isActive?: boolean;
+  }): Promise<User> {
     let user = await this.users.findById(id);
 
     if (!user || user.role !== UserRole.RESPONSABLE_CENTRE || !user.centreId) {
@@ -90,6 +93,6 @@ export class ModifierResponsableUseCase {
       await this.sessions.revokeAllForUser(user.id);
     }
 
-    return toResponsableDto(user);
+    return user;
   }
 }

@@ -29,7 +29,6 @@ export interface CentreProps {
 export class Centre {
   private constructor(private readonly props: CentreProps) {}
 
-  // Factory method
   static create(params: {
     id: string;
     nom: string;
@@ -53,12 +52,10 @@ export class Centre {
     });
   }
 
-  // Reconstitution depuis la BDD
   static reconstituer(props: CentreProps): Centre {
     return new Centre(props);
   }
 
-  // Getters
   get id(): CentreId { return this.props.id; }
   get nom(): Nom { return this.props.nom; }
   get ville(): Ville { return this.props.ville; }
@@ -70,7 +67,6 @@ export class Centre {
   get createdAt(): Date { return this.props.createdAt; }
   get updatedAt(): Date { return this.props.updatedAt; }
 
-  // Comportements métier
   activer(): void {
     if (this.props.statut === StatutCentre.ARCHIVE) {
       throw new DomainValidationException(

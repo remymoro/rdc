@@ -34,8 +34,8 @@ describe('ModifierCentreUseCase', () => {
 
     const result = await useCase.execute(UUID, { nom: 'Nouveau Nom' });
 
-    expect(result.nom).toBe('Nouveau Nom');
-    expect(result.ville).toBe('Bordeaux');
+    expect(result.nom.value).toBe('Nouveau Nom');
+    expect(result.ville.value).toBe('Bordeaux');
     expect(mockRepo.save).toHaveBeenCalledTimes(1);
   });
 
@@ -45,8 +45,8 @@ describe('ModifierCentreUseCase', () => {
 
     const result = await useCase.execute(UUID, { ville: 'Paris' });
 
-    expect(result.nom).toBe('Centre Bordeaux');
-    expect(result.ville).toBe('Paris');
+    expect(result.nom.value).toBe('Centre Bordeaux');
+    expect(result.ville.value).toBe('Paris');
   });
 
   it('lève DomainNotFoundException si le centre est introuvable', async () => {

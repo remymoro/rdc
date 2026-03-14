@@ -1,4 +1,4 @@
-import { Centre } from '../entities/centre.entity';
+import { Centre } from './centre.entity';
 import { CentreId } from '../value-objects/centre-id.vo';
 
 export interface ICentreRepository {

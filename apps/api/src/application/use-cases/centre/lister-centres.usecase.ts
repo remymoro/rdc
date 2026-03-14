@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { ICentreRepository } from '@rdc/domain';
-import type { CentreDto } from '@rdc/shared';
-import { mapCentreToDto } from './centre.mapper';
+import { Centre, ICentreRepository } from '@rdc/domain';
 
 @Injectable()
 export class ListerCentresUseCase {
@@ -9,9 +7,7 @@ export class ListerCentresUseCase {
     @Inject('ICentreRepository') private readonly centreRepository: ICentreRepository,
   ) {}
 
-  async execute(): Promise<CentreDto[]> {
-    const centres = await this.centreRepository.findAll();
-
-    return centres.map(mapCentreToDto);
+  async execute(): Promise<Centre[]> {
+    return this.centreRepository.findAll();
   }
 }

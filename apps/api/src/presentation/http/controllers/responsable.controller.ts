@@ -23,6 +23,7 @@ import { CreerResponsableRequest } from '../dtos/creer-responsable.request';
 import { ListerResponsablesQuery } from '../dtos/lister-responsables.query';
 import { ModifierResponsableRequest } from '../dtos/modifier-responsable.request';
 import { AccessTokenGuard } from '../guards/access-token.guard';
+import { toResponsableDto } from '../mappers/responsable-centre.mapper';
 
 @Controller('admin/responsables')
 @UseGuards(AccessTokenGuard)
@@ -39,22 +40,25 @@ export class ResponsableController {
   @HttpCode(HttpStatus.CREATED)
   async creer(@Req() req: Request & { user?: { role: string } }, @Body() body: CreerResponsableRequest) {
     this.assertAdmin(req);
-    return this.creerResponsable.execute(body);
+    const user = await this.creerResponsable.execute(body);
+    return toResponsableDto(user);
   }
 
   @Get()
   async lister(@Req() req: Request & { user?: { role: string } }, @Query() query: ListerResponsablesQuery) {
     this.assertAdmin(req);
-    return this.listerResponsables.execute({
+    const responsables = await this.listerResponsables.execute({
       centreId: query.centreId,
       isActive: query.isActive === undefined ? undefined : query.isActive === 'true',
     });
+    return responsables.map(toResponsableDto);
   }
 
   @Get(':id')
   async obtenir(@Req() req: Request & { user?: { role: string } }, @Param('id') id: string) {
     this.assertAdmin(req);
-    return this.obtenirResponsable.execute(id);
+    const user = await this.obtenirResponsable.execute(id);
+    return toResponsableDto(user);
   }
 
   @Patch(':id')
@@ -64,7 +68,8 @@ export class ResponsableController {
     @Body() body: ModifierResponsableRequest,
   ) {
     this.assertAdmin(req);
-    return this.modifierResponsable.execute(id, body);
+    const user = await this.modifierResponsable.execute(id, body);
+    return toResponsableDto(user);
   }
 
   @Delete(':id')

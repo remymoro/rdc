@@ -66,7 +66,7 @@ describe('ModifierResponsableUseCase', () => {
 
     const result = await useCase.execute(RESPONSABLE_ID, { email: 'new-resp@rdc.fr' });
 
-    expect(result.email).toBe('new-resp@rdc.fr');
+    expect(result.email.value).toBe('new-resp@rdc.fr');
     expect(mockSessions.revokeAllForUser).toHaveBeenCalledWith(RESPONSABLE_ID);
   });
 

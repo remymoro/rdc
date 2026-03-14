@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CentreId, DomainNotFoundException, DomainConflictException, ICentreRepository } from '@rdc/domain';
-import type { CentreDto, ModifierCentreDto } from '@rdc/shared';
-import { mapCentreToDto } from './centre.mapper';
+import { Centre, CentreId, DomainNotFoundException, DomainConflictException, ICentreRepository } from '@rdc/domain';
 
 @Injectable()
 export class ModifierCentreUseCase {
@@ -9,7 +7,14 @@ export class ModifierCentreUseCase {
     @Inject('ICentreRepository') private readonly centreRepository: ICentreRepository,
   ) {}
 
-  async execute(id: string, dto: ModifierCentreDto): Promise<CentreDto> {
+  async execute(id: string, params: {
+    nom?: string;
+    ville?: string;
+    codePostal?: string;
+    adresse?: string;
+    telephone?: string | null;
+    email?: string | null;
+  }): Promise<Centre> {
     const centreId = CentreId.create(id);
     const centre = await this.centreRepository.findById(centreId);
 
@@ -17,7 +22,7 @@ export class ModifierCentreUseCase {
       throw new DomainNotFoundException(`Centre ${id} introuvable`, 'CENTRE_NOT_FOUND');
     }
 
-    centre.modifier(dto);
+    centre.modifier(params);
 
     const doublon = await this.centreRepository.findByUniqueKey({
       nom: centre.nom.value,
@@ -35,6 +40,6 @@ export class ModifierCentreUseCase {
 
     await this.centreRepository.save(centre);
 
-    return mapCentreToDto(centre);
+    return centre;
   }
 }

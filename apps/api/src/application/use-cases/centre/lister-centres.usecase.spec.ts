@@ -41,10 +41,10 @@ describe('ListerCentresUseCase', () => {
     const result = await useCase.execute();
 
     expect(result).toHaveLength(2);
-    expect(result[0].nom).toBe('Centre A');
-    expect(result[0].ville).toBe('Bordeaux');
+    expect(result[0].nom.value).toBe('Centre A');
+    expect(result[0].ville.value).toBe('Bordeaux');
     expect(result[0].statut).toBe('ACTIF');
-    expect(result[1].nom).toBe('Centre B');
+    expect(result[1].nom.value).toBe('Centre B');
   });
 
   it('retourne les champs optionnels undefined si absents', async () => {

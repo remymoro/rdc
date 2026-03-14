@@ -45,7 +45,6 @@ import { SupprimerResponsableUseCase } from '../application/use-cases/auth/suppr
       useClass: TokenService,
     },
     PasswordHasherService,
-    TokenService,
     AccessTokenGuard,
     CentreAccessGuard,
     BootstrapAdminUseCase,
@@ -59,6 +58,6 @@ import { SupprimerResponsableUseCase } from '../application/use-cases/auth/suppr
     ModifierResponsableUseCase,
     SupprimerResponsableUseCase,
   ],
-  exports: [TokenService, AccessTokenGuard, CentreAccessGuard],
+  exports: ['ITokenService', AccessTokenGuard, CentreAccessGuard],
 })
 export class AuthModule {}
