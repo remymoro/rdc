@@ -2,14 +2,13 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { AuthUserDto, LoginDto } from '@rdc/shared';
 import { AuthRepository } from '../ports/auth.repository';
 
-const TOKEN_STORAGE_KEY = 'rdc.auth.v1.accessToken';
-
 @Injectable({ providedIn: 'root' })
 export class AuthFacade {
   private readonly authRepo = inject(AuthRepository);
   private initPromise: Promise<void> | null = null;
 
-  readonly accessToken = signal<string | null>(this.readToken());
+  // Access token kept in memory only to reduce XSS exposure.
+  readonly accessToken = signal<string | null>(null);
   readonly user = signal<AuthUserDto | null>(null);
   readonly loading = signal(false);
   readonly initialized = signal(false);
@@ -37,24 +36,9 @@ export class AuthFacade {
       return this.initPromise;
     }
 
-    const token = this.accessToken();
-    if (!token) {
-      this.initialized.set(true);
-      return Promise.resolve();
-    }
-
     this.loading.set(true);
     this.initPromise = new Promise(resolve => {
-      this.authRepo.me(token).subscribe({
-        next: user => {
-          this.user.set(user);
-          this.finishInit();
-          resolve();
-        },
-        error: () => {
-          this.tryRefresh(resolve);
-        },
-      });
+      this.tryRefresh(resolve);
     });
 
     return this.initPromise;
@@ -121,16 +105,10 @@ export class AuthFacade {
   private setSession(accessToken: string, user: AuthUserDto): void {
     this.accessToken.set(accessToken);
     this.user.set(user);
-    localStorage.setItem(TOKEN_STORAGE_KEY, accessToken);
   }
 
   private clearSession(): void {
     this.accessToken.set(null);
     this.user.set(null);
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
-  }
-
-  private readToken(): string | null {
-    return localStorage.getItem(TOKEN_STORAGE_KEY);
   }
 }

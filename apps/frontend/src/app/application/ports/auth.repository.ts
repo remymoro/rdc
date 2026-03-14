@@ -10,5 +10,5 @@ export abstract class AuthRepository {
   abstract login(dto: LoginDto): Observable<AuthSessionDto>;
   abstract refresh(): Observable<AuthSessionDto>;
   abstract logout(): Observable<void>;
-  abstract me(token: string): Observable<AuthUserDto>;
+  abstract me(): Observable<AuthUserDto>;
 }
