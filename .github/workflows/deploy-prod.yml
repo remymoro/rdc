@@ -36,6 +36,12 @@ jobs:
           script: |
             set -e
             cd ~/rdc/prod
+
+            # Injection idempotente du secret Azure dans le .env prod
+            grep -q "AZURE_STORAGE_CONNECTION_STRING=" .env \
+              && sed -i "s|AZURE_STORAGE_CONNECTION_STRING=.*|AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING_PROD }}|" .env \
+              || echo "AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING_PROD }}" >> .env
+
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
             docker image prune -f

@@ -21,8 +21,9 @@ import { CentreFacade } from '../../../application/facades/centre.facade';
             </div>
           </div>
 
-          <div class="grid w-full max-w-md gap-3 sm:grid-cols-2">
+          <div class="grid w-full max-w-xl gap-3 sm:grid-cols-3">
             <a class="btn btn-primary btn-lg" routerLink="/centre/mon-centre">Voir mon centre</a>
+            <a class="btn btn-outline btn-lg" routerLink="/centre/magasins">Voir mes magasins</a>
             <a class="btn btn-outline btn-lg" routerLink="/centre/profil">Voir mon profil</a>
           </div>
         </div>
@@ -89,6 +90,10 @@ import { CentreFacade } from '../../../application/facades/centre.facade';
                 <a class="block rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/centre/mon-centre">
                   <p class="font-medium">Consulter la fiche complete</p>
                   <p class="mt-2 text-sm text-base-content/60">Coordonnees, adresse et statut du centre.</p>
+                </a>
+                <a class="block rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/centre/magasins">
+                  <p class="font-medium">Préparer le suivi magasin</p>
+                  <p class="mt-2 text-sm text-base-content/60">Premiere vue des magasins rattaches au centre.</p>
                 </a>
                 <a class="block rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/centre/profil">
                   <p class="font-medium">Verifier vos acces</p>

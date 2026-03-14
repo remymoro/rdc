@@ -35,6 +35,13 @@ export const ADMIN_ROUTES: Routes = [
           ),
       },
       {
+        path: 'magasins',
+        loadComponent: () =>
+          import('./magasins/admin-magasins-page.component').then(
+            m => m.AdminMagasinsPageComponent
+          ),
+      },
+      {
         path: 'profil',
         loadComponent: () =>
           import('../../ui/profil/profil.component').then(

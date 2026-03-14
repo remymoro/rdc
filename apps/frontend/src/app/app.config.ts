@@ -10,7 +10,9 @@ import { AuthRepository } from './application/ports/auth.repository';
 import { AuthHttpRepository } from './infrastructure/repositories/auth.http.repository';
 import { authTokenInterceptor } from './infrastructure/http/auth-token.interceptor';
 import { AuthFacade } from './application/facades/auth.facade';
+import { MagasinRepository } from './application/ports/magasin.repository';
 import { ResponsableCentreRepository } from './application/ports/responsable-centre.repository';
+import { MagasinHttpRepository } from './infrastructure/repositories/magasin.http.repository';
 import { ResponsableCentreHttpRepository } from './infrastructure/repositories/responsable-centre.http.repository';
 
 export const appConfig: ApplicationConfig = {
@@ -31,6 +33,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: ResponsableCentreRepository,
       useClass: ResponsableCentreHttpRepository,
+    },
+    {
+      provide: MagasinRepository,
+      useClass: MagasinHttpRepository,
     },
   ],
 };

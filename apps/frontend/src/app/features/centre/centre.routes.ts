@@ -28,6 +28,13 @@ export const CENTRE_ROUTES: Routes = [
           ),
       },
       {
+        path: 'magasins',
+        loadComponent: () =>
+          import('./magasins/centre-magasins-page.component').then(
+            m => m.CentreMagasinsPageComponent
+          ),
+      },
+      {
         path: 'profil',
         loadComponent: () =>
           import('../../ui/profil/profil.component').then(
