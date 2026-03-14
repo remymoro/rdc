@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Centre, DomainConflictException, ICentreRepository } from '@rdc/domain';
 import type { CreerCentreDto, CentreDto } from '@rdc/shared';
 import { randomUUID } from 'crypto';
+import { mapCentreToDto } from './centre.mapper';
 
 @Injectable()
 export class CreerCentreUseCase {
@@ -36,17 +37,6 @@ export class CreerCentreUseCase {
 
     await this.centreRepository.save(centre);
 
-    return {
-      id: centre.id.value,
-      nom: centre.nom.value,
-      ville: centre.ville.value,
-      codePostal: centre.codePostal.value,
-      adresse: centre.adresse.value,
-      telephone: centre.telephone?.value,
-      email: centre.email?.value,
-      statut: centre.statut,
-      createdAt: centre.createdAt,
-      updatedAt: centre.updatedAt,
-    };
+    return mapCentreToDto(centre);
   }
 }
