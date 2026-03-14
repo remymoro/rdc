@@ -81,7 +81,7 @@ describe('CreerCentreUseCase', () => {
     expect(mockRepo.save).not.toHaveBeenCalled();
   });
 
-  it('le code de l\'exception doublon est CENTRE_ALREADY_EXISTS', async () => {
+  it('le code de l\'exception est CENTRE_ALREADY_EXISTS', async () => {
     const existant = Centre.create({ id: UUID, ...DTO });
     mockRepo.findByUniqueKey.mockResolvedValue(existant);
 

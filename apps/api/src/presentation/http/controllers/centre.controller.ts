@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import type { Request } from 'express';
-import { CreerCentreUseCase } from '../../../application/use-cases/creer-centre.usecase';
-import { ListerCentresUseCase } from '../../../application/use-cases/lister-centres.usecase';
-import { ModifierCentreUseCase } from '../../../application/use-cases/modifier-centre.usecase';
-import { DesactiverCentreUseCase } from '../../../application/use-cases/desactiver-centre.usecase';
-import { ArchiverCentreUseCase } from '../../../application/use-cases/archiver-centre.usecase';
-import { ActiverCentreUseCase } from '../../../application/use-cases/activer-centre.usecase';
+import { CreerCentreUseCase } from '../../../application/use-cases/centre/creer-centre.usecase';
+import { ListerCentresUseCase } from '../../../application/use-cases/centre/lister-centres.usecase';
+import { ModifierCentreUseCase } from '../../../application/use-cases/centre/modifier-centre.usecase';
+import { DesactiverCentreUseCase } from '../../../application/use-cases/centre/desactiver-centre.usecase';
+import { ArchiverCentreUseCase } from '../../../application/use-cases/centre/archiver-centre.usecase';
+import { ActiverCentreUseCase } from '../../../application/use-cases/centre/activer-centre.usecase';
 import { CreerCentreRequest } from '../dtos/creer-centre.request';
 import { ModifierCentreRequest } from '../dtos/modifier-centre.request';
 import { CentreAccessGuard } from '../guards/centre-access.guard';
