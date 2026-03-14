@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CentreId, DomainConflictException, DomainNotFoundException, Email, ICentreRepository, IUserRepository, User, UserRole } from '@rdc/domain';
-import type { CreerResponsableCentreDto, ResponsableCentreDto } from '@rdc/shared';
 import { randomUUID } from 'node:crypto';
 import { IPasswordHasher } from '../../auth/interfaces/password-hasher.port';
-import { toResponsableDto } from './responsable-centre.mapper';
 
 @Injectable()
 export class CreerResponsableUseCase {
@@ -13,7 +11,7 @@ export class CreerResponsableUseCase {
     @Inject('IPasswordHasher') private readonly passwordHasher: IPasswordHasher,
   ) {}
 
-  async execute(params: CreerResponsableCentreDto): Promise<ResponsableCentreDto> {
+  async execute(params: { email: string; password: string; centreId: string }): Promise<User> {
     const email = Email.create(params.email);
     const existing = await this.users.findByEmail(email);
 
@@ -38,6 +36,6 @@ export class CreerResponsableUseCase {
 
     await this.users.save(user);
 
-    return toResponsableDto(user);
+    return user;
   }
 }

@@ -33,9 +33,9 @@ describe('CreerCentreUseCase', () => {
 
     const result = await useCase.execute(DTO);
 
-    expect(result.nom).toBe('Centre Bordeaux');
-    expect(result.ville).toBe('Bordeaux');
-    expect(result.codePostal).toBe('33000');
+    expect(result.nom.value).toBe('Centre Bordeaux');
+    expect(result.ville.value).toBe('Bordeaux');
+    expect(result.codePostal.value).toBe('33000');
     expect(result.statut).toBe('ACTIF');
     expect(result.id).toBeDefined();
     expect(mockRepo.save).toHaveBeenCalledTimes(1);
@@ -61,7 +61,7 @@ describe('CreerCentreUseCase', () => {
 
     const result = await useCase.execute({ ...DTO, telephone: '06 12 34 56 78' });
 
-    expect(result.telephone).toBe('+33612345678');
+    expect(result.telephone?.value).toBe('+33612345678');
   });
 
   it('normalise l\'email via le VO', async () => {
@@ -70,7 +70,7 @@ describe('CreerCentreUseCase', () => {
 
     const result = await useCase.execute({ ...DTO, email: 'Contact@Test.FR' });
 
-    expect(result.email).toBe('contact@test.fr');
+    expect(result.email?.value).toBe('contact@test.fr');
   });
 
   it('lève DomainConflictException si le centre existe déjà', async () => {

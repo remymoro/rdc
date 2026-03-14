@@ -9,6 +9,7 @@ import { ActiverCentreUseCase } from '../../../application/use-cases/centre/acti
 import { CreerCentreRequest } from '../dtos/creer-centre.request';
 import { ModifierCentreRequest } from '../dtos/modifier-centre.request';
 import { CentreAccessGuard } from '../guards/centre-access.guard';
+import { mapCentreToDto } from '../mappers/centre.mapper';
 
 @Controller('centres')
 @UseGuards(CentreAccessGuard)
@@ -25,26 +26,29 @@ export class CentreController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async creer(@Body() body: CreerCentreRequest) {
-    return this.creerCentre.execute(body);
+    const centre = await this.creerCentre.execute(body);
+    return mapCentreToDto(centre);
   }
 
   @Get()
   async lister(@Req() req: Request & { user?: { role: string; centreId?: string } }) {
     const centres = await this.listerCentres.execute();
+    const centresDto = centres.map(mapCentreToDto);
 
     if (req.user?.role === 'RESPONSABLE_CENTRE') {
       if (!req.user.centreId) {
         return [];
       }
-      return centres.filter(centre => centre.id === req.user?.centreId);
+      return centresDto.filter(c => c.id === req.user?.centreId);
     }
 
-    return centres;
+    return centresDto;
   }
 
   @Patch(':id')
   async modifier(@Param('id') id: string, @Body() body: ModifierCentreRequest) {
-    return this.modifierCentre.execute(id, body);
+    const centre = await this.modifierCentre.execute(id, body);
+    return mapCentreToDto(centre);
   }
 
   @Patch(':id/desactiver')
