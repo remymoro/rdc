@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Post,
   Req,
   Res,
@@ -22,7 +23,7 @@ import { LoginRequest } from '../dtos/login.request';
 import { CreerResponsableRequest } from '../dtos/creer-responsable.request';
 import { AccessTokenGuard } from '../guards/access-token.guard';
 import { getCookieValue } from '../utils/cookies';
-import { TokenService } from '../../../infrastructure/security/token.service';
+import type { ITokenService } from '../../../application/auth/interfaces/token-service.port';
 import { CreerResponsableUseCase } from '../../../application/use-cases/auth/creer-responsable.usecase';
 
 const REFRESH_COOKIE = 'refresh_token';
@@ -36,7 +37,7 @@ export class AuthController {
     private readonly logoutUseCase: LogoutUseCase,
     private readonly meUseCase: MeUseCase,
     private readonly creerResponsableUseCase: CreerResponsableUseCase,
-    private readonly tokenService: TokenService,
+    @Inject('ITokenService') private readonly tokenService: ITokenService,
   ) {}
 
   @Post('bootstrap-admin')
