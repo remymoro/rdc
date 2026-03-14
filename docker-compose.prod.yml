@@ -2,7 +2,7 @@ services:
   api:
     image: ghcr.io/remymoro/rdc-api:latest
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3001:3000"
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
@@ -22,7 +22,7 @@ services:
   frontend:
     image: ghcr.io/remymoro/rdc-frontend:latest
     ports:
-      - "127.0.0.1:4200:80"
+      - "127.0.0.1:4201:80"
     networks:
       - rdc-network
     restart: unless-stopped
@@ -34,7 +34,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres_staging_data:/var/lib/postgresql/data
+      - postgres_prod_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -49,4 +49,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_staging_data:
+  postgres_prod_data:

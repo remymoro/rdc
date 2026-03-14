@@ -27,6 +27,7 @@ jobs:
         with:
           context: .
           file: ./apps/api/Dockerfile
+          target: prod
           push: true
           tags: ghcr.io/remymoro/rdc-api:latest
 
@@ -35,6 +36,7 @@ jobs:
         with:
           context: .
           file: ./apps/frontend/Dockerfile
+          target: prod
           push: true
           tags: ghcr.io/remymoro/rdc-frontend:latest
 
@@ -44,6 +46,18 @@ jobs:
     environment: staging
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose.staging.yml to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: docker-compose.staging.yml
+          target: ~/rdc/staging/
+
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1
         with:
@@ -51,6 +65,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            set -e
             cd ~/rdc/staging
             docker compose -f docker-compose.staging.yml pull
             docker compose -f docker-compose.staging.yml up -d --remove-orphans
