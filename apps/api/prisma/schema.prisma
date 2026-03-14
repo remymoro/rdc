@@ -37,10 +37,23 @@ model Magasin {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
 
-  centre Centre @relation(fields: [centreId], references: [id], onDelete: Restrict)
+  centre Centre        @relation(fields: [centreId], references: [id], onDelete: Restrict)
+  images MagasinImage[]
 
   @@unique([nom, ville, codePostal, adresse])
   @@index([centreId])
+}
+
+model MagasinImage {
+  id        String   @id @default(uuid())
+  url       String
+  ordre     Int      @default(0)
+  magasinId String
+  createdAt DateTime @default(now())
+
+  magasin Magasin @relation(fields: [magasinId], references: [id], onDelete: Cascade)
+
+  @@index([magasinId])
 }
 
 model User {
