@@ -225,9 +225,11 @@ infrastructure/
 
 ### Frontend
 
-- `AuthFacade` stocke l'`accessToken` dans `localStorage` (`rdc.auth.v1.accessToken`)
+- `AuthFacade` garde l'`accessToken` en mémoire uniquement
 - `auth-token.interceptor.ts` injecte `Authorization: Bearer ...` hors login/refresh
-- Initialisation de session : tentative `me()` puis fallback `refresh()`
+- `login()`, `refresh()` et `logout()` utilisent `withCredentials: true`
+- Initialisation de session : `refresh()` direct via le cookie HTTP-only
+- `me()` reste disponible mais n'a plus besoin de paramètre token
 - Routing actuel basé sur `authGuard` + `roleGuard`
 
 ### Rôles
@@ -261,6 +263,131 @@ Les filtres backend exposent un format homogène de ce type :
   "timestamp": "2026-03-..."
 }
 ```
+
+## Audit DDD / Hexa pour Claude
+
+Quand tu audits ce repo, fais un **vrai contrôle d'architecture**, pas seulement un check syntaxique.
+
+### Ce qu'il faut vérifier en priorité
+
+```text
+1. libs/domain reste pur
+2. application ne dépend pas des frameworks ou de l'infrastructure
+3. presentation reste mince et ne porte pas la logique métier
+4. infrastructure implémente les ports sans contaminer le domaine
+5. le frontend respecte aussi ses couches (features/ui → facades → ports → adapters)
+```
+
+### Règles de dépendances attendues
+
+- `libs/domain`
+  - autorisé : fichiers du domaine, types utilitaires TS/JS purs
+  - interdit : `@nestjs/*`, `@angular/*`, Prisma, `express`, `pg`, `rxjs`, `axios`, DTOs de `libs/shared`
+- `apps/api/src/application`
+  - autorisé : `@rdc/domain`, interfaces/ports applicatifs, types simples
+  - à éviter fortement : dépendance directe à `presentation/`, `infrastructure/`, Prisma, Express
+- `apps/api/src/presentation`
+  - autorisé : HTTP, validation, cookies, filtres, guards, appel des use cases
+  - interdit : logique métier lourde, règles de domaine dupliquées, accès direct Prisma
+- `apps/api/src/infrastructure`
+  - autorisé : Prisma, bcrypt, crypto, adaptateurs, mapping persistence ↔ domain
+  - interdit : règles métier qui devraient vivre dans `libs/domain`
+- `apps/frontend/src/app/application`
+  - autorisé : ports, facades, orchestration d'état
+  - interdit : `HttpClient` direct dans les facades si l'appel doit passer par un port
+- `apps/frontend/src/app/infrastructure`
+  - autorisé : `HttpClient`, interceptors, guards techniques, repositories HTTP
+- `apps/frontend/src/app/features` et `ui`
+  - autorisé : composants Angular, interaction avec facades
+  - interdit : appels HTTP directs, logique métier cœur, accès direct à Prisma ou à la persistence
+
+### Ce qui est toléré comme composition root
+
+Ne pas sur-signaler ces fichiers comme violations d'architecture :
+
+- `apps/api/src/app/app.module.ts`
+- `apps/api/src/app/auth.module.ts`
+- `apps/api/src/app/centre.module.ts`
+- `apps/frontend/src/app/app.config.ts`
+- `apps/frontend/src/app/app.routes.ts`
+- `apps/api/src/main.ts`
+
+Ces fichiers ont le droit de brancher les implémentations concrètes sur les ports et de câbler le runtime.
+
+### Red flags à signaler
+
+- import framework dans `libs/domain`
+- import de `infrastructure` ou `presentation` depuis `application`
+- contrôleur Nest qui contient de la vraie logique métier au lieu d'orchestrer un use case
+- repository Prisma qui retourne des objets persistence bruts au lieu d'objets domaine ou DTOs attendus
+- façade Angular qui devient une couche métier trop riche ou fait du transport direct
+- composant `features/` ou `ui/` qui fait un appel HTTP direct
+- duplication des règles de validation métier entre `libs/domain` et les couches périphériques
+- usage de DTOs `shared` dans `libs/domain`
+- décision de rôle / sécurité dispersée dans plusieurs couches au lieu d'être clairement centralisée
+
+### Points déjà sensibles dans le repo actuel
+
+- `apps/api/src/presentation/http/controllers/auth.controller.ts`
+  - injecte `TokenService` depuis l'infrastructure pour gérer le cookie de refresh
+  - ce n'est pas catastrophique, mais c'est une entorse à une séparation stricte
+- les use cases backend utilisent `@Injectable()` / `@Inject()` Nest
+  - acceptable pragmatiquement aujourd'hui
+  - si l'objectif devient une pureté maximale, il faudra sortir ces décorateurs du cœur applicatif
+- `apps/frontend/src/app/infrastructure/guards/admin.guard.ts`
+  - existe encore
+  - le routing courant s'appuie surtout sur `authGuard` + `roleGuard`
+  - si tu vois du code mort ou plus aligné avec les routes, remonte-le
+- `apps/api/src/infrastructure/prisma/generated/`
+  - appartient strictement à l'infrastructure
+  - si ce code fuit dans `application` ou `domain`, c'est un vrai problème
+
+### Commandes utiles pour l'audit
+
+```bash
+# Checks Nx de base
+npm exec nx lint api
+npm exec nx lint frontend
+npm exec nx lint domain
+npm exec nx test api
+npm exec nx test frontend
+npm exec nx test domain
+npm exec nx build api
+npm exec nx build frontend
+
+# Recherche d'import framework ou de fuite de couche
+rg -n "from '@nestjs|from '@angular|from '@prisma|from 'express|from 'pg|from 'axios|from 'rxjs'" libs/domain apps/api/src/application
+rg -n "from '../infrastructure|from '../../infrastructure|from '../presentation|from '../../presentation'" apps/api/src/application
+rg -n "HttpClient|fetch\\(|axios\\(" apps/frontend/src/app/features apps/frontend/src/app/ui
+rg -n "from '@rdc/shared'" libs/domain
+rg -n "prisma|Prisma|PrismaService" apps/api/src/application apps/api/src/presentation
+```
+
+### Attendu du rapport d'audit
+
+Quand tu rends un avis, donne :
+
+- les **findings d'abord**, classés par sévérité
+- pour chaque finding : fichier, ligne, règle DDD/Hexa concernée, impact concret
+- distingue :
+  - violation certaine
+  - dette acceptable / compromis pragmatique
+  - simple piste de durcissement architectural
+- si tout est globalement cohérent, dis-le explicitement, puis liste les zones à surveiller
+
+### Barème pratique
+
+- **Critique**
+  - `libs/domain` importe un framework ou de l'infrastructure
+  - `application` dépend directement de Prisma, Express, Angular, HttpClient, contrôleurs
+- **Important**
+  - logique métier significative en contrôleur / guard / repository
+  - fuite de types persistence dans les couches métier
+- **Modéré**
+  - couplage technique pragmatique mais améliorable
+  - duplication de validation ou de mapping
+- **Faible**
+  - naming, organisation, code mort, cohérence de dossier
 
 ## Commandes utiles
 
@@ -351,19 +478,25 @@ Conventions :
   - build `frontend` + `api`
 - `deploy-staging.yml`
   - push sur `main`
-  - build/push Docker vers `ghcr.io/remymoro/rdc-api` et `ghcr.io/remymoro/rdc-frontend`
+  - build/push Docker vers `ghcr.io/remymoro/rdc-api` et `ghcr.io/remymoro/rdc-frontend` avec `target: prod`
+  - copie `docker-compose.staging.yml` sur le VPS
   - déploiement via SSH avec `docker-compose.staging.yml`
 - `deploy-prod.yml`
   - déclenchement manuel
   - confirmation explicite requise
-  - `docker compose pull && docker compose up -d`
+  - copie `docker-compose.prod.yml` sur le VPS
+  - `docker compose -f docker-compose.prod.yml pull && up -d --remove-orphans`
 
 ## Infrastructure connue depuis le repo
 
 - Registry Docker : `ghcr.io`
 - Déploiement staging via `docker-compose.staging.yml`
+- Déploiement production via `docker-compose.prod.yml`
 - PostgreSQL 16
 - Front prod servi par Nginx
+- En staging/prod, les services HTTP sont bindés sur `127.0.0.1`
+- La base n'est pas exposée publiquement dans les compose staging/prod
+- Volumes DB séparés : `postgres_staging_data` et `postgres_prod_data`
 - Certaines infos d'exploitation externes au repo (DNS publics, reverse proxy global, IP VPS, SSL) doivent être confirmées hors code si nécessaire
 
 ## Variables d'environnement
