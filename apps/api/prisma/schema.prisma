@@ -19,8 +19,28 @@ model Centre {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   responsables User[]
+  magasins     Magasin[]
 
   @@unique([nom, ville, codePostal, adresse])
+}
+
+model Magasin {
+  id         String       @id @default(uuid())
+  nom        String
+  ville      String
+  codePostal String
+  adresse    String
+  telephone  String?
+  email      String?
+  statut     StatutCentre @default(ACTIF)
+  centreId   String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  centre Centre @relation(fields: [centreId], references: [id], onDelete: Restrict)
+
+  @@unique([nom, ville, codePostal, adresse])
+  @@index([centreId])
 }
 
 model User {
