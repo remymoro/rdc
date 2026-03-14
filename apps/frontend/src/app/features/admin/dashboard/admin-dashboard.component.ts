@@ -22,9 +22,10 @@ import { ResponsableCentreFacade } from '../../../application/facades/responsabl
             </div>
           </div>
 
-          <div class="grid w-full max-w-md gap-3 sm:grid-cols-2">
+          <div class="grid w-full max-w-xl gap-3 sm:grid-cols-3">
             <a class="btn btn-primary btn-lg" routerLink="/admin/centres">Gerer les centres</a>
             <a class="btn btn-outline btn-lg" routerLink="/admin/responsables">Gerer les responsables</a>
+            <a class="btn btn-outline btn-lg" routerLink="/admin/magasins">Gerer les magasins</a>
           </div>
         </div>
       </section>
@@ -84,6 +85,10 @@ import { ResponsableCentreFacade } from '../../../application/facades/responsabl
               <a class="rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/admin/responsables">
                 <p class="font-medium">Gerer les responsables</p>
                 <p class="mt-2 text-sm text-base-content/60">Associer les comptes au bon centre et controler leur statut.</p>
+              </a>
+              <a class="rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/admin/magasins">
+                <p class="font-medium">Recenser les magasins</p>
+                <p class="mt-2 text-sm text-base-content/60">Poser le premier catalogue magasin par centre avant la suite du domaine.</p>
               </a>
               <a class="rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/admin/profil">
                 <p class="font-medium">Verifier vos acces</p>

@@ -6,3 +6,4 @@ export type {
   CreerResponsableCentreDto,
   ModifierResponsableCentreDto,
 } from './responsable';
+export type { MagasinDto, MagasinImageDto, CreerMagasinDto, ModifierMagasinDto } from './magasin';

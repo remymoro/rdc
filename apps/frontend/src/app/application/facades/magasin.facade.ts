@@ -1,0 +1,102 @@
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { CreerMagasinDto, MagasinDto, ModifierMagasinDto } from '@rdc/shared';
+import { MagasinFilters, MagasinRepository } from '../ports/magasin.repository';
+
+@Injectable({ providedIn: 'root' })
+export class MagasinFacade {
+  private readonly repo = inject(MagasinRepository);
+
+  readonly magasins = signal<MagasinDto[]>([]);
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
+
+  readonly actifs = computed(() => this.magasins().filter(magasin => magasin.statut === 'ACTIF'));
+  readonly count = computed(() => this.magasins().length);
+
+  charger(filters?: MagasinFilters): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.repo.findAll(filters).subscribe({
+      next: magasins => {
+        this.magasins.set(magasins);
+        this.loading.set(false);
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? 'Erreur lors du chargement des magasins');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  creer(dto: CreerMagasinDto): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.repo.creer(dto).subscribe({
+      next: magasin => {
+        this.magasins.update(list => [magasin, ...list]);
+        this.loading.set(false);
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? 'Erreur lors de la creation du magasin');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  modifier(id: string, dto: ModifierMagasinDto): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.repo.modifier(id, dto).subscribe({
+      next: magasin => {
+        this.magasins.update(list => list.map(item => item.id === id ? magasin : item));
+        this.loading.set(false);
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? 'Erreur lors de la modification du magasin');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  desactiver(id: string): void {
+    this.repo.desactiver(id).subscribe({
+      next: () => {
+        this.magasins.update(list =>
+          list.map(item => item.id === id ? { ...item, statut: 'INACTIF' as const } : item)
+        );
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? 'Erreur lors de la desactivation du magasin');
+      },
+    });
+  }
+
+  activer(id: string): void {
+    this.repo.activer(id).subscribe({
+      next: () => {
+        this.magasins.update(list =>
+          list.map(item => item.id === id ? { ...item, statut: 'ACTIF' as const } : item)
+        );
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? 'Erreur lors de la reactivation du magasin');
+      },
+    });
+  }
+
+  archiver(id: string): void {
+    this.repo.archiver(id).subscribe({
+      next: () => {
+        this.magasins.update(list =>
+          list.map(item => item.id === id ? { ...item, statut: 'ARCHIVE' as const } : item)
+        );
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? "Erreur lors de l'archivage du magasin");
+      },
+    });
+  }
+}

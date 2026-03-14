@@ -105,6 +105,11 @@ export class CentreShellComponent {
       link: '/centre/mon-centre',
     },
     {
+      label: 'Mes magasins',
+      description: 'Premiere vue des magasins rattaches a votre centre',
+      link: '/centre/magasins',
+    },
+    {
       label: 'Profil',
       description: 'Informations de connexion et rattachement',
       link: '/centre/profil',

@@ -108,6 +108,11 @@ export class AdminShellComponent {
       link: '/admin/responsables',
     },
     {
+      label: 'Magasins',
+      description: 'Recensement et cycle de vie des magasins par centre',
+      link: '/admin/magasins',
+    },
+    {
       label: 'Profil',
       description: 'Informations de connexion et acces',
       link: '/admin/profil',

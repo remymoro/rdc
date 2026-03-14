@@ -3,9 +3,12 @@ export { Centre, StatutCentre } from './centre';
 export type { CentreProps, ICentreRepository } from './centre';
 export { User, UserRole } from './user';
 export type { UserProps, IUserRepository } from './user';
+export { Magasin, StatutMagasin } from './magasin';
+export type { MagasinProps, MagasinImage, IMagasinRepository } from './magasin';
 
 // Value Objects
 export { CentreId } from './value-objects/centre-id.vo';
+export { MagasinId } from './value-objects/magasin-id.vo';
 export { Nom } from './value-objects/nom.vo';
 export { CodePostal } from './value-objects/code-postal.vo';
 export { Ville } from './value-objects/ville.vo';
