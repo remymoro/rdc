@@ -37,5 +37,6 @@ import { MagasinController } from '../presentation/http/controllers/magasin.cont
     AjouterImageMagasinUseCase,
     SupprimerImageMagasinUseCase,
   ],
+  exports: ['IMagasinRepository'],
 })
 export class MagasinModule {}

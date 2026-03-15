@@ -42,6 +42,13 @@ export const ADMIN_ROUTES: Routes = [
           ),
       },
       {
+        path: 'collectes',
+        loadComponent: () =>
+          import('./collectes/admin-collectes-page.component').then(
+            m => m.AdminCollectesPageComponent
+          ),
+      },
+      {
         path: 'profil',
         loadComponent: () =>
           import('../../ui/profil/profil.component').then(

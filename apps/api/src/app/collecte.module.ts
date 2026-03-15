@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth.module';
 import { CentreModule } from './centre.module';
+import { MagasinModule } from './magasin.module';
 import { CollecteController } from '../presentation/http/controllers/collecte.controller';
 
 // Adaptateur — swap ici sans toucher les use cases
@@ -12,7 +13,7 @@ import { OuvrirInscriptionsUseCase } from '../application/use-cases/collecte/ouv
 import { AjouterMagasinCollecteUseCase } from '../application/use-cases/collecte/ajouter-magasin-collecte.usecase';
 
 @Module({
-  imports: [AuthModule, CentreModule],
+  imports: [AuthModule, CentreModule, MagasinModule],
   controllers: [CollecteController],
   providers: [
     {
