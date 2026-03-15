@@ -19,7 +19,7 @@ export class AzureBlobStorageService implements IBlobStorageService {
       throw new Error('AZURE_STORAGE_CONNECTION_STRING est requis');
     }
 
-    this.containerName = process.env.AZURE_STORAGE_CONTAINER_NAME ?? 'rdc';
+    this.containerName = process.env.AZURE_STORAGE_CONTAINER_NAME ?? 'images';
     this.client = BlobServiceClient.fromConnectionString(connectionString);
 
     const accountName = this.extract(connectionString, 'AccountName');

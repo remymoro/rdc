@@ -42,6 +42,10 @@ jobs:
               && sed -i "s|AZURE_STORAGE_CONNECTION_STRING=.*|AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING_PROD }}|" .env \
               || echo "AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING_PROD }}" >> .env
 
+            grep -q "AZURE_STORAGE_CONTAINER_NAME=" .env \
+              && sed -i "s|AZURE_STORAGE_CONTAINER_NAME=.*|AZURE_STORAGE_CONTAINER_NAME=images|" .env \
+              || echo "AZURE_STORAGE_CONTAINER_NAME=images" >> .env
+
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
             docker image prune -f
