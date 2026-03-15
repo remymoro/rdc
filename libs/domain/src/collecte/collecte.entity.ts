@@ -158,6 +158,7 @@ export class Collecte {
         'COLLECTE_STATUT_INVALIDE',
       );
     }
+    this.trouverParticipation(magasinId);
     this.props.participations = this.props.participations.filter(
       p => !p.magasinId.equals(magasinId),
     );
