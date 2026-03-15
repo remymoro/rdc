@@ -1,1 +1,1 @@
-export type { CollecteDto, ParticipationMagasinDto } from './collecte.dto';
+export type { CollecteDto, ParticipationMagasinDto, CollecteParticipationCentreDto, MagasinParticipantDto } from './collecte.dto';

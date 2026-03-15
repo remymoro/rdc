@@ -18,9 +18,10 @@ export class MagasinFacade {
     this.lastFilters = filters;
     this.loading.set(true);
     this.error.set(null);
-
+   console.log('Chargement des magasins avec les filtres', filters);
     this.repo.findAll(filters).subscribe({
       next: magasins => {
+        console.log('Magasins chargés', magasins);
         this.magasins.set(magasins);
         this.loading.set(false);
       },

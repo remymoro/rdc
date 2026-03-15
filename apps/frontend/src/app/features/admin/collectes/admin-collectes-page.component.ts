@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { PanelModule } from 'primeng/panel';
 import { CollecteFacade } from '../../../application/facades/collecte.facade';
 import { MagasinFacade } from '../../../application/facades/magasin.facade';
 import { CentreFacade } from '../../../application/facades/centre.facade';
@@ -9,7 +10,7 @@ import { CreerCollecteDto } from '../../../application/ports/collecte.repository
 @Component({
   selector: 'app-admin-collectes-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PanelModule],
   template: `
     <section class="space-y-6">
 
@@ -43,62 +44,67 @@ import { CreerCollecteDto } from '../../../application/ports/collecte.repository
       <!-- Création -->
       <article class="card border border-base-300 bg-base-100 shadow-sm">
         <div class="card-body gap-5">
-          <div>
-            <p class="text-xs uppercase tracking-[0.24em] text-base-content/45">Création</p>
-            <h2 class="mt-2 text-2xl font-semibold">Nouvelle collecte</h2>
-          </div>
+          <p-panel header="Nouvelle collecte" [toggleable]="true" [collapsed]="true">
+            <div class="mx-auto w-full max-w-4xl space-y-5 pt-2">
+              <p class="mt-2 text-sm leading-6 text-base-content/65">
+                Cadrez la campagne dans un formulaire recentre avec les dates essentielles et une lecture immediate du planning.
+              </p>
 
-          <form class="grid gap-4 lg:grid-cols-2" (ngSubmit)="creer()">
-            <label class="form-control gap-2 lg:col-span-2">
-              <span class="label-text">Nom de la collecte</span>
-              <input
-                class="input input-bordered"
-                name="nom"
-                placeholder="Collecte des Restos 2026"
-                [(ngModel)]="createForm.nom"
-                required />
-            </label>
+              <div class="rounded-[1.75rem] border border-base-200 bg-base-200/35 p-4 shadow-inner sm:p-6">
+              <form class="grid w-full gap-4 md:grid-cols-2" (ngSubmit)="creer()">
+                <label class="form-control gap-2 md:col-span-2">
+                  <span class="label-text">Nom de la collecte</span>
+                  <input
+                    class="input input-bordered w-full bg-base-100"
+                    name="nom"
+                    placeholder="Collecte des Restos 2026"
+                    [(ngModel)]="createForm.nom"
+                    required />
+                </label>
 
-            <label class="form-control gap-2">
-              <span class="label-text">Date de début</span>
-              <input
-                class="input input-bordered"
-                type="date"
-                name="dateDebut"
-                [(ngModel)]="createForm.dateDebut"
-                required />
-            </label>
+                <label class="form-control gap-2">
+                  <span class="label-text">Date de début</span>
+                  <input
+                    class="input input-bordered w-full bg-base-100"
+                    type="date"
+                    name="dateDebut"
+                    [(ngModel)]="createForm.dateDebut"
+                    required />
+                </label>
 
-            <label class="form-control gap-2">
-              <span class="label-text">Date de fin</span>
-              <input
-                class="input input-bordered"
-                type="date"
-                name="dateFin"
-                [(ngModel)]="createForm.dateFin"
-                required />
-            </label>
+                <label class="form-control gap-2">
+                  <span class="label-text">Date de fin</span>
+                  <input
+                    class="input input-bordered w-full bg-base-100"
+                    type="date"
+                    name="dateFin"
+                    [(ngModel)]="createForm.dateFin"
+                    required />
+                </label>
 
-            <label class="form-control gap-2 lg:col-span-2">
-              <span class="label-text">Fin de saisie (tolérance)</span>
-              <input
-                class="input input-bordered"
-                type="date"
-                name="dateFinSaisie"
-                [(ngModel)]="createForm.dateFinSaisie"
-                required />
-              <span class="label-text text-base-content/55 text-xs">Délai après la collecte pour finaliser la saisie des données</span>
-            </label>
+                <label class="form-control gap-2 md:col-span-2">
+                  <span class="label-text">Fin de saisie (tolérance)</span>
+                  <input
+                    class="input input-bordered w-full bg-base-100"
+                    type="date"
+                    name="dateFinSaisie"
+                    [(ngModel)]="createForm.dateFinSaisie"
+                    required />
+                  <span class="label-text text-base-content/55 text-xs">Délai après la collecte pour finaliser la saisie des données</span>
+                </label>
 
-            <div class="lg:col-span-2 flex justify-end">
-              <button
-                class="btn btn-primary"
-                type="submit"
-                [disabled]="collecteFacade.loading() || !canCreate()">
-                Créer la collecte
-              </button>
+                <div class="flex justify-center md:col-span-2 md:justify-end">
+                  <button
+                    class="btn btn-primary min-w-52"
+                    type="submit"
+                    [disabled]="collecteFacade.loading() || !canCreate()">
+                    Créer la collecte
+                  </button>
+                </div>
+              </form>
+              </div>
             </div>
-          </form>
+          </p-panel>
         </div>
       </article>
 
@@ -145,9 +151,13 @@ import { CreerCollecteDto } from '../../../application/ports/collecte.repository
                     <select
                       class="select select-bordered select-sm flex-1"
                       [(ngModel)]="magasinSelectionne[collecte.id]">
-                      <option value="">Ajouter un magasin...</option>
-                      @for (magasin of magasinsFiltres(collecte.id); track magasin.id) {
-                        <option [value]="magasin.id">{{ magasin.nom }} — {{ magasin.ville }}</option>
+                      <option value="">Sélectionner un magasin...</option>
+                      @for (centre of centresAvecMagasinsDisponibles(collecte.id); track centre.id) {
+                        <optgroup [label]="centre.nom">
+                          @for (magasin of magasinsDuCentreFiltres(collecte.id, centre.id); track magasin.id) {
+                            <option [value]="magasin.id">{{ magasin.nom }} — {{ magasin.adresse }}, {{ magasin.ville }}</option>
+                          }
+                        </optgroup>
                       }
                     </select>
                     <button
@@ -165,7 +175,17 @@ import { CreerCollecteDto } from '../../../application/ports/collecte.repository
                     @for (participation of collecte.participations; track participation.magasinId) {
                       <li class="flex items-center justify-between rounded-xl border border-base-300 bg-base-100 px-3 py-2 text-sm">
                         <span>{{ nomMagasin(participation.magasinId) }}</span>
-                        <span class="badge badge-sm badge-outline">{{ participation.statut }}</span>
+                        <div class="flex items-center gap-2">
+                          <span class="badge badge-sm badge-outline">{{ participation.statut }}</span>
+                          @if (collecte.statut === 'PREPARATION') {
+                            <button
+                              class="btn btn-xs btn-ghost text-error"
+                              type="button"
+                              (click)="retirerMagasin(collecte.id, participation.magasinId)">
+                              Retirer
+                            </button>
+                          }
+                        </div>
                       </li>
                     }
                   </ul>
@@ -201,6 +221,7 @@ export class AdminCollectesPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.collecteFacade.charger();
+    this.magasinFacade.charger();
     this.centreFacade.charger();
   }
 
@@ -228,6 +249,10 @@ export class AdminCollectesPageComponent implements OnInit {
     this.collecteFacade.ouvrirInscriptions(id);
   }
 
+  retirerMagasin(collecteId: string, magasinId: string): void {
+    this.collecteFacade.retirerMagasin(collecteId, magasinId);
+  }
+
   ajouterMagasin(collecteId: string): void {
     const magasinId = this.magasinSelectionne[collecteId];
     if (!magasinId) return;
@@ -244,7 +269,23 @@ export class AdminCollectesPageComponent implements OnInit {
     );
   }
 
+  centresAvecMagasinsDisponibles(collecteId: string) {
+    const magasins = this.magasinsFiltres(collecteId);
+    const centreIds = [...new Set(magasins.map(m => m.centreId))];
+    return this.centreFacade.centres().filter(c => centreIds.includes(c.id));
+  }
+
+  magasinsDuCentreFiltres(collecteId: string, centreId: string) {
+    return this.magasinsFiltres(collecteId).filter(m => m.centreId === centreId);
+  }
+
   nomMagasin(magasinId: string): string {
-    return this.magasinFacade.magasins().find(m => m.id === magasinId)?.nom ?? magasinId;
+    const m = this.magasinFacade.magasins().find(m => m.id === magasinId);
+    if (!m) return magasinId;
+    return `${m.nom} — ${m.adresse}, ${m.ville}`;
+  }
+
+  nomCentre(centreId: string): string {
+    return this.centreFacade.centres().find(c => c.id === centreId)?.nom ?? centreId;
   }
 }

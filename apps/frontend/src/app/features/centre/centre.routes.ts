@@ -35,6 +35,13 @@ export const CENTRE_ROUTES: Routes = [
           ),
       },
       {
+        path: 'collectes',
+        loadComponent: () =>
+          import('./collectes/centre-collectes-page.component').then(
+            m => m.CentreCollectesPageComponent
+          ),
+      },
+      {
         path: 'profil',
         loadComponent: () =>
           import('../../ui/profil/profil.component').then(

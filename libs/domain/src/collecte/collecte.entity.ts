@@ -135,7 +135,7 @@ export class Collecte {
     }
     const existe = this.props.participations.some(p => p.magasinId.equals(magasinId));
     if (existe) return;
-    this.props.participations.push({ magasinId, statut: StatutParticipation.EN_ATTENTE });
+    this.props.participations.push({ magasinId, statut: StatutParticipation.CONFIRME });
     this.props.updatedAt = new Date();
   }
 
@@ -148,6 +148,19 @@ export class Collecte {
   refuserMagasin(magasinId: MagasinId): void {
     const participation = this.trouverParticipation(magasinId);
     participation.statut = StatutParticipation.REFUSE;
+    this.props.updatedAt = new Date();
+  }
+
+  retirerMagasin(magasinId: MagasinId): void {
+    if (this.props.statut !== StatutCollecte.PREPARATION) {
+      throw new DomainValidationException(
+        'Un magasin ne peut être retiré qu\'en phase de PREPARATION',
+        'COLLECTE_STATUT_INVALIDE',
+      );
+    }
+    this.props.participations = this.props.participations.filter(
+      p => !p.magasinId.equals(magasinId),
+    );
     this.props.updatedAt = new Date();
   }
 

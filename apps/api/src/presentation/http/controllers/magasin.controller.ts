@@ -19,6 +19,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import type { Request } from 'express';
 import { CreerMagasinUseCase } from '../../../application/use-cases/magasin/creer-magasin.usecase';
 import { ListerMagasinsUseCase } from '../../../application/use-cases/magasin/lister-magasins.usecase';
+import { ListerTousMagasinsUseCase } from '../../../application/use-cases/magasin/lister-tous-magasins.usecase';
 import { ObtenirMagasinUseCase } from '../../../application/use-cases/magasin/obtenir-magasin.usecase';
 import { ModifierMagasinUseCase } from '../../../application/use-cases/magasin/modifier-magasin.usecase';
 import { DesactiverMagasinUseCase } from '../../../application/use-cases/magasin/desactiver-magasin.usecase';
@@ -40,6 +41,7 @@ export class MagasinController {
   constructor(
     private readonly creerMagasin: CreerMagasinUseCase,
     private readonly listerMagasins: ListerMagasinsUseCase,
+    private readonly listerTousMagasins: ListerTousMagasinsUseCase,
     private readonly obtenirMagasin: ObtenirMagasinUseCase,
     private readonly modifierMagasin: ModifierMagasinUseCase,
     private readonly desactiverMagasin: DesactiverMagasinUseCase,
@@ -60,6 +62,12 @@ export class MagasinController {
     this.assertCentreAccess(req, centreId);
     const magasin = await this.creerMagasin.execute({ ...body, centreId });
     return mapMagasinToDto(magasin, this.blobStorage);
+  }
+
+  @Get('magasins')
+  async listerTous() {
+    const magasins = await this.listerTousMagasins.execute();
+    return magasins.map(m => mapMagasinToDto(m, this.blobStorage));
   }
 
   @Get('centres/:centreId/magasins')

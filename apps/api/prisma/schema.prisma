@@ -40,6 +40,7 @@ model Magasin {
   centre         Centre                @relation(fields: [centreId], references: [id], onDelete: Restrict)
   images         MagasinImage[]
   participations ParticipationMagasin[]
+  slots          Slot[]
 
   @@unique([nom, ville, codePostal, adresse])
   @@index([centreId])
@@ -88,15 +89,17 @@ model RefreshTokenSession {
 }
 
 model Collecte {
-  id           String                 @id @default(uuid())
-  nom          String                 @unique
-  dateDebut    DateTime
-  dateFin      DateTime
+  id            String                 @id @default(uuid())
+  nom           String                 @unique
+  dateDebut     DateTime
+  dateFin       DateTime
   dateFinSaisie DateTime
-  statut       StatutCollecte         @default(PREPARATION)
-  createdAt    DateTime               @default(now())
-  updatedAt    DateTime               @updatedAt
+  statut        StatutCollecte         @default(PREPARATION)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
   participations ParticipationMagasin[]
+  slots          Slot[]
 }
 
 model ParticipationMagasin {
@@ -109,6 +112,47 @@ model ParticipationMagasin {
 
   @@id([collecteId, magasinId])
   @@index([collecteId])
+}
+
+model Produit {
+  code      String   @id
+  nom       String
+  famille   String
+  actif     Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  lignes LigneSaisie[]
+}
+
+model Slot {
+  id             String   @id @default(uuid())
+  collecteId     String
+  magasinId      String
+  benevoleNom    String
+  benevolePrenom String
+  benevoleTel    String?
+  heureDebut     DateTime
+  heureFin       DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  collecte Collecte      @relation(fields: [collecteId], references: [id], onDelete: Cascade)
+  magasin  Magasin       @relation(fields: [magasinId], references: [id], onDelete: Cascade)
+  lignes   LigneSaisie[]
+
+  @@index([collecteId])
+  @@index([magasinId])
+}
+
+model LigneSaisie {
+  slotId      String
+  produitCode String
+  quantite    Int
+
+  slot    Slot    @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  produit Produit @relation(fields: [produitCode], references: [code])
+
+  @@id([slotId, produitCode])
 }
 
 enum StatutCentre {

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CollecteDto } from '@rdc/shared';
+import { CollecteDto, CollecteParticipationCentreDto } from '@rdc/shared';
 import { CollecteRepository, CreerCollecteDto } from '../../application/ports/collecte.repository';
 
 @Injectable()
@@ -23,5 +23,13 @@ export class CollecteHttpRepository extends CollecteRepository {
 
   ajouterMagasin(collecteId: string, magasinId: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${collecteId}/magasins/${magasinId}`, {});
+  }
+
+  retirerMagasin(collecteId: string, magasinId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${collecteId}/magasins/${magasinId}`);
+  }
+
+  mesParticipations(): Observable<CollecteParticipationCentreDto[]> {
+    return this.http.get<CollecteParticipationCentreDto[]>(`${this.apiUrl}/mes-participations`);
   }
 }

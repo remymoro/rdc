@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { CollecteDto } from '@rdc/shared';
+import { CollecteDto, CollecteParticipationCentreDto } from '@rdc/shared';
 import { CollecteRepository, CreerCollecteDto } from '../ports/collecte.repository';
 
 @Injectable({ providedIn: 'root' })
@@ -7,6 +7,7 @@ export class CollecteFacade {
   private readonly repo = inject(CollecteRepository);
 
   readonly collectes = signal<CollecteDto[]>([]);
+  readonly participationsCentre = signal<CollecteParticipationCentreDto[]>([]);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
 
@@ -77,7 +78,7 @@ export class CollecteFacade {
                   ...c,
                   participations: [
                     ...c.participations,
-                    { magasinId, statut: 'EN_ATTENTE' as const },
+                    { magasinId, statut: 'CONFIRME' as const },
                   ],
                 }
               : c
@@ -86,6 +87,44 @@ export class CollecteFacade {
       },
       error: err => {
         this.error.set(err?.error?.message ?? "Erreur lors de l'ajout du magasin");
+      },
+    });
+  }
+
+  chargerMesParticipations(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.repo.mesParticipations().subscribe({
+      next: participations => {
+        this.participationsCentre.set(participations);
+        this.loading.set(false);
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? 'Erreur lors du chargement des participations');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  retirerMagasin(collecteId: string, magasinId: string): void {
+    this.error.set(null);
+
+    this.repo.retirerMagasin(collecteId, magasinId).subscribe({
+      next: () => {
+        this.collectes.update(list =>
+          list.map(c =>
+            c.id === collecteId
+              ? {
+                  ...c,
+                  participations: c.participations.filter(p => p.magasinId !== magasinId),
+                }
+              : c
+          )
+        );
+      },
+      error: err => {
+        this.error.set(err?.error?.message ?? 'Erreur lors du retrait du magasin');
       },
     });
   }

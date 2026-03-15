@@ -7,4 +7,4 @@ export type {
   ModifierResponsableCentreDto,
 } from './responsable';
 export type { MagasinDto, MagasinImageDto, CreerMagasinDto, ModifierMagasinDto } from './magasin';
-export type { CollecteDto, ParticipationMagasinDto } from './collecte';
+export type { CollecteDto, ParticipationMagasinDto, CollecteParticipationCentreDto, MagasinParticipantDto } from './collecte';
