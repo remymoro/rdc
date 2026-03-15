@@ -37,8 +37,9 @@ model Magasin {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
 
-  centre Centre        @relation(fields: [centreId], references: [id], onDelete: Restrict)
-  images MagasinImage[]
+  centre         Centre                @relation(fields: [centreId], references: [id], onDelete: Restrict)
+  images         MagasinImage[]
+  participations ParticipationMagasin[]
 
   @@unique([nom, ville, codePostal, adresse])
   @@index([centreId])
@@ -86,10 +87,49 @@ model RefreshTokenSession {
   @@index([expiresAt])
 }
 
+model Collecte {
+  id           String                 @id @default(uuid())
+  nom          String                 @unique
+  dateDebut    DateTime
+  dateFin      DateTime
+  dateFinSaisie DateTime
+  statut       StatutCollecte         @default(PREPARATION)
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  participations ParticipationMagasin[]
+}
+
+model ParticipationMagasin {
+  collecteId  String
+  magasinId   String
+  statut      StatutParticipation @default(EN_ATTENTE)
+
+  collecte Collecte @relation(fields: [collecteId], references: [id], onDelete: Cascade)
+  magasin  Magasin  @relation(fields: [magasinId], references: [id], onDelete: Cascade)
+
+  @@id([collecteId, magasinId])
+  @@index([collecteId])
+}
+
 enum StatutCentre {
   ACTIF
   INACTIF
   ARCHIVE
+}
+
+enum StatutCollecte {
+  PREPARATION
+  INSCRIPTIONS_OUVERTES
+  INSCRIPTIONS_FERMEES
+  EN_COURS
+  SAISIE_EN_COURS
+  TERMINEE
+}
+
+enum StatutParticipation {
+  EN_ATTENTE
+  CONFIRME
+  REFUSE
 }
 
 enum UserRole {
