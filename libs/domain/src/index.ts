@@ -5,10 +5,14 @@ export { User, UserRole } from './user';
 export type { UserProps, IUserRepository } from './user';
 export { Magasin, StatutMagasin } from './magasin';
 export type { MagasinProps, MagasinImage, IMagasinRepository } from './magasin';
+export { Collecte, StatutCollecte, StatutParticipation } from './collecte';
+export type { CollecteProps, ICollecteRepository, ParticipationMagasin } from './collecte';
 
 // Value Objects
 export { CentreId } from './value-objects/centre-id.vo';
 export { MagasinId } from './value-objects/magasin-id.vo';
+export { CollecteId } from './value-objects/collecte-id.vo';
+export { PeriodeCollecte } from './value-objects/periode-collecte.vo';
 export { Nom } from './value-objects/nom.vo';
 export { CodePostal } from './value-objects/code-postal.vo';
 export { Ville } from './value-objects/ville.vo';

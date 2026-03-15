@@ -5,6 +5,7 @@ import { CentreId } from '../value-objects/centre-id.vo';
 
 export interface IMagasinRepository {
   findById(id: MagasinId): Promise<Magasin | null>;
+  findAll(): Promise<Magasin[]>;
   findByCentreId(centreId: CentreId): Promise<Magasin[]>;
   findByUniqueKey(params: {
     nom: string;

@@ -5,6 +5,7 @@ import { CentreModule } from './centre.module';
 import { MagasinPrismaRepository } from '../infrastructure/repositories/magasin.prisma.repository';
 import { CreerMagasinUseCase } from '../application/use-cases/magasin/creer-magasin.usecase';
 import { ListerMagasinsUseCase } from '../application/use-cases/magasin/lister-magasins.usecase';
+import { ListerTousMagasinsUseCase } from '../application/use-cases/magasin/lister-tous-magasins.usecase';
 import { ObtenirMagasinUseCase } from '../application/use-cases/magasin/obtenir-magasin.usecase';
 import { ModifierMagasinUseCase } from '../application/use-cases/magasin/modifier-magasin.usecase';
 import { DesactiverMagasinUseCase } from '../application/use-cases/magasin/desactiver-magasin.usecase';
@@ -29,6 +30,7 @@ import { MagasinController } from '../presentation/http/controllers/magasin.cont
     },
     CreerMagasinUseCase,
     ListerMagasinsUseCase,
+    ListerTousMagasinsUseCase,
     ObtenirMagasinUseCase,
     ModifierMagasinUseCase,
     DesactiverMagasinUseCase,
@@ -37,5 +39,6 @@ import { MagasinController } from '../presentation/http/controllers/magasin.cont
     AjouterImageMagasinUseCase,
     SupprimerImageMagasinUseCase,
   ],
+  exports: ['IMagasinRepository'],
 })
 export class MagasinModule {}

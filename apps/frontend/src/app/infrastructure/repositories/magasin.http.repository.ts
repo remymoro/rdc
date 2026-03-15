@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CreerMagasinDto, MagasinDto, MagasinImageDto, ModifierMagasinDto } from '@rdc/shared';
 import { MagasinFilters, MagasinRepository } from '../../application/ports/magasin.repository';
@@ -16,19 +16,20 @@ export class MagasinHttpRepository extends MagasinRepository {
     }
 
     const centreIds = [...new Set(filters?.centreIds?.filter(Boolean) ?? [])];
-    if (!centreIds.length) {
-      return of([]);
+    if (centreIds.length) {
+      return forkJoin(centreIds.map(centreId => this.findByCentreId(centreId))).pipe(
+        map(results =>
+          results
+            .flat()
+            .sort((a, b) =>
+              a.centreId.localeCompare(b.centreId) || a.nom.localeCompare(b.nom)
+            )
+        ),
+      );
     }
 
-    return forkJoin(centreIds.map(centreId => this.findByCentreId(centreId))).pipe(
-      map(results =>
-        results
-          .flat()
-          .sort((a, b) =>
-            a.centreId.localeCompare(b.centreId) || a.nom.localeCompare(b.nom)
-          )
-      ),
-    );
+    // Pas de filtre → tous les magasins (admin)
+    return this.http.get<MagasinDto[]>(`${this.apiUrl}/magasins`);
   }
 
   creer(dto: CreerMagasinDto): Observable<MagasinDto> {

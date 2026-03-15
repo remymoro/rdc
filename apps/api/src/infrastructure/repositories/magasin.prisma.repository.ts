@@ -31,6 +31,14 @@ export class MagasinPrismaRepository implements IMagasinRepository {
     return Magasin.reconstituer(this.toProps(data));
   }
 
+  async findAll(): Promise<Magasin[]> {
+    const data = await this.prisma.magasin.findMany({
+      include: { images: { orderBy: { ordre: 'asc' } } },
+      orderBy: [{ centreId: 'asc' }, { nom: 'asc' }],
+    });
+    return data.map(d => Magasin.reconstituer(this.toProps(d)));
+  }
+
   async findByCentreId(centreId: CentreId): Promise<Magasin[]> {
     const data = await this.prisma.magasin.findMany({
       where: { centreId: centreId.value },

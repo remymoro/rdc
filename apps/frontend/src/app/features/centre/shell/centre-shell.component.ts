@@ -110,6 +110,11 @@ export class CentreShellComponent {
       link: '/centre/magasins',
     },
     {
+      label: 'Collectes',
+      description: 'Magasins confirmés pour chaque collecte annuelle',
+      link: '/centre/collectes',
+    },
+    {
       label: 'Profil',
       description: 'Informations de connexion et rattachement',
       link: '/centre/profil',

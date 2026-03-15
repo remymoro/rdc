@@ -14,6 +14,8 @@ import { MagasinRepository } from './application/ports/magasin.repository';
 import { ResponsableCentreRepository } from './application/ports/responsable-centre.repository';
 import { MagasinHttpRepository } from './infrastructure/repositories/magasin.http.repository';
 import { ResponsableCentreHttpRepository } from './infrastructure/repositories/responsable-centre.http.repository';
+import { CollecteRepository } from './application/ports/collecte.repository';
+import { CollecteHttpRepository } from './infrastructure/repositories/collecte.http.repository';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,6 +39,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: MagasinRepository,
       useClass: MagasinHttpRepository,
+    },
+    {
+      provide: CollecteRepository,
+      useClass: CollecteHttpRepository,
     },
   ],
 };

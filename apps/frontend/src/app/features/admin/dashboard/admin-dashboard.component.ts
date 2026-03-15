@@ -22,10 +22,11 @@ import { ResponsableCentreFacade } from '../../../application/facades/responsabl
             </div>
           </div>
 
-          <div class="grid w-full max-w-xl gap-3 sm:grid-cols-3">
+          <div class="grid w-full max-w-xl gap-3 sm:grid-cols-2">
             <a class="btn btn-primary btn-lg" routerLink="/admin/centres">Gerer les centres</a>
             <a class="btn btn-outline btn-lg" routerLink="/admin/responsables">Gerer les responsables</a>
             <a class="btn btn-outline btn-lg" routerLink="/admin/magasins">Gerer les magasins</a>
+            <a class="btn btn-outline btn-lg" routerLink="/admin/collectes">Gerer les collectes</a>
           </div>
         </div>
       </section>
@@ -89,6 +90,10 @@ import { ResponsableCentreFacade } from '../../../application/facades/responsabl
               <a class="rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/admin/magasins">
                 <p class="font-medium">Recenser les magasins</p>
                 <p class="mt-2 text-sm text-base-content/60">Poser le premier catalogue magasin par centre avant la suite du domaine.</p>
+              </a>
+              <a class="rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/admin/collectes">
+                <p class="font-medium">Piloter les collectes</p>
+                <p class="mt-2 text-sm text-base-content/60">Créer les collectes annuelles, gérer les magasins participants et ouvrir les inscriptions bénévoles.</p>
               </a>
               <a class="rounded-2xl border border-base-300 bg-base-200/40 p-4 transition hover:bg-base-200" routerLink="/admin/profil">
                 <p class="font-medium">Verifier vos acces</p>

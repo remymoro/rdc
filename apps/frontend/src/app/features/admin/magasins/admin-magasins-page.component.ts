@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { PanelModule } from 'primeng/panel';
 import { CreerMagasinDto, MagasinDto, MagasinImageDto } from '@rdc/shared';
 import { CentreFacade } from '../../../application/facades/centre.facade';
 import { MagasinFacade } from '../../../application/facades/magasin.facade';
@@ -9,7 +10,7 @@ import { MagasinFacade } from '../../../application/facades/magasin.facade';
 @Component({
   selector: 'app-admin-magasins-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, PanelModule],
   template: `
     <section class="space-y-6">
       <section class="hero overflow-hidden rounded-[2rem] border border-base-300 bg-[linear-gradient(135deg,#ffffff_0%,#fff7ed_45%,#fde68a_110%)] shadow-sm">
@@ -70,58 +71,63 @@ import { MagasinFacade } from '../../../application/facades/magasin.facade';
 
       <article class="card border border-base-300 bg-base-100 shadow-sm">
         <div class="card-body gap-5">
-          <div>
-            <p class="text-xs uppercase tracking-[0.24em] text-base-content/45">Creation</p>
-            <h2 class="mt-2 text-2xl font-semibold">Ajouter un magasin</h2>
-          </div>
+          <p-panel header="Nouveau magasin" [toggleable]="true" [collapsed]="true">
+            <div class="mx-auto w-full max-w-5xl space-y-5 pt-2">
+              <p class="mt-2 text-sm leading-6 text-base-content/65">
+                Renseignez le point de vente, son centre de rattachement et ses coordonnees dans un bloc unique, clair et recentre.
+              </p>
 
-          <form class="grid gap-4 lg:grid-cols-3" (ngSubmit)="creer()">
-            <label class="form-control gap-2">
-              <span class="label-text">Nom</span>
-              <input class="input input-bordered" name="nom" [(ngModel)]="createForm.nom" required />
-            </label>
+              <div class="rounded-[1.75rem] border border-base-200 bg-base-200/35 p-4 shadow-inner sm:p-6">
+              <form class="grid w-full gap-4 md:grid-cols-2 xl:grid-cols-3" (ngSubmit)="creer()">
+                <label class="form-control gap-2">
+                  <span class="label-text">Nom</span>
+                  <input class="input input-bordered w-full bg-base-100" name="nom" [(ngModel)]="createForm.nom" required />
+                </label>
 
-            <label class="form-control gap-2">
-              <span class="label-text">Ville</span>
-              <input class="input input-bordered" name="ville" [(ngModel)]="createForm.ville" required />
-            </label>
+                <label class="form-control gap-2">
+                  <span class="label-text">Ville</span>
+                  <input class="input input-bordered w-full bg-base-100" name="ville" [(ngModel)]="createForm.ville" required />
+                </label>
 
-            <label class="form-control gap-2">
-              <span class="label-text">Code postal</span>
-              <input class="input input-bordered" name="codePostal" [(ngModel)]="createForm.codePostal" required />
-            </label>
+                <label class="form-control gap-2">
+                  <span class="label-text">Code postal</span>
+                  <input class="input input-bordered w-full bg-base-100" name="codePostal" [(ngModel)]="createForm.codePostal" required />
+                </label>
 
-            <label class="form-control gap-2 lg:col-span-2">
-              <span class="label-text">Adresse</span>
-              <input class="input input-bordered" name="adresse" [(ngModel)]="createForm.adresse" required />
-            </label>
+                <label class="form-control gap-2 md:col-span-2 xl:col-span-2">
+                  <span class="label-text">Adresse</span>
+                  <input class="input input-bordered w-full bg-base-100" name="adresse" [(ngModel)]="createForm.adresse" required />
+                </label>
 
-            <label class="form-control gap-2">
-              <span class="label-text">Centre</span>
-              <select class="select select-bordered" name="centreId" [(ngModel)]="createForm.centreId" required>
-                <option value="" disabled>Choisir un centre</option>
-                @for (centre of centreFacade.centres(); track centre.id) {
-                  <option [value]="centre.id">{{ centre.nom }} - {{ centre.ville }}</option>
-                }
-              </select>
-            </label>
+                <label class="form-control gap-2">
+                  <span class="label-text">Centre</span>
+                  <select class="select select-bordered w-full bg-base-100" name="centreId" [(ngModel)]="createForm.centreId" required>
+                    <option value="" disabled>Choisir un centre</option>
+                    @for (centre of centreFacade.centres(); track centre.id) {
+                      <option [value]="centre.id">{{ centre.nom }} - {{ centre.ville }}</option>
+                    }
+                  </select>
+                </label>
 
-            <label class="form-control gap-2">
-              <span class="label-text">Telephone</span>
-              <input class="input input-bordered" name="telephone" [(ngModel)]="createForm.telephone" />
-            </label>
+                <label class="form-control gap-2">
+                  <span class="label-text">Telephone</span>
+                  <input class="input input-bordered w-full bg-base-100" name="telephone" [(ngModel)]="createForm.telephone" />
+                </label>
 
-            <label class="form-control gap-2">
-              <span class="label-text">Email</span>
-              <input class="input input-bordered" name="email" [(ngModel)]="createForm.email" />
-            </label>
+                <label class="form-control gap-2">
+                  <span class="label-text">Email</span>
+                  <input class="input input-bordered w-full bg-base-100" name="email" [(ngModel)]="createForm.email" />
+                </label>
 
-            <div class="lg:col-span-3 flex justify-end">
-              <button class="btn btn-primary" type="submit" [disabled]="magasinFacade.loading() || !canCreate()">
-                Creer le magasin
-              </button>
+                <div class="flex justify-center md:col-span-2 md:justify-end xl:col-span-3">
+                  <button class="btn btn-primary min-w-52" type="submit" [disabled]="magasinFacade.loading() || !canCreate()">
+                    Creer le magasin
+                  </button>
+                </div>
+              </form>
+              </div>
             </div>
-          </form>
+          </p-panel>
         </div>
       </article>
 
