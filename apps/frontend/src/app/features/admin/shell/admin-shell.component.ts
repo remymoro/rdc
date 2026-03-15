@@ -113,6 +113,11 @@ export class AdminShellComponent {
       link: '/admin/magasins',
     },
     {
+      label: 'Collectes',
+      description: 'Pilotage des collectes annuelles et inscriptions benevoles',
+      link: '/admin/collectes',
+    },
+    {
       label: 'Profil',
       description: 'Informations de connexion et acces',
       link: '/admin/profil',
